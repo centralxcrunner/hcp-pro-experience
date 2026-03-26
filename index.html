@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCP AI-First New Pro Experience</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f172a; color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+  /* Hero */
+  .hero {
+    text-align: center; padding: 3rem 2rem 2rem;
+  }
+  .hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .hero h1 span { color: #10b981; }
+  .hero .sub { color: #94a3b8; font-size: 1.15rem; max-width: 650px; margin: 0 auto 1.5rem; }
+  .hero .badges { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; }
+  .hero .badge {
+    background: #1e293b; border: 1px solid #334155; border-radius: 999px;
+    padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 600;
+  }
+  .hero .badge.gr { border-color: #10b981; color: #6ee7b7; }
+  .hero .badge.bl { border-color: #3b82f6; color: #93c5fd; }
+  .hero .badge.pu { border-color: #8b5cf6; color: #c4b5fd; }
+
+  /* Section */
+  .section {
+    padding: 3rem 0; border-top: 1px solid #1e293b;
+  }
+  .section-label {
+    font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #3b82f6; margin-bottom: 0.5rem;
+  }
+  .section-label.gr { color: #10b981; }
+  .section-label.pu { color: #8b5cf6; }
+  .section-label.rd { color: #ef4444; }
+  .section-label.pk { color: #ec4899; }
+  .section-label.cy { color: #06b6d4; }
+  .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .section-desc { color: #94a3b8; font-size: 0.95rem; margin-bottom: 1.5rem; max-width: 700px; }
+
+  /* Phone mockup */
+  .phone {
+    width: 320px; min-height: 580px;
+    background: #000; border-radius: 36px; padding: 12px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    position: relative; margin: 0 auto;
+  }
+  .phone-screen {
+    background: #fff; border-radius: 26px; overflow: hidden;
+    min-height: 556px; position: relative;
+  }
+  .phone-notch {
+    width: 120px; height: 28px; background: #000; border-radius: 0 0 16px 16px;
+    margin: 0 auto; position: relative; z-index: 2;
+  }
+
+  /* Website mockup */
+  .web-header {
+    background: linear-gradient(135deg, #1a365d 0%, #2d3748 100%);
+    padding: 1.5rem 1.25rem; text-align: center; color: #fff;
+  }
+  .web-header .logo { font-size: 1.4rem; font-weight: 800; }
+  .web-header .logo span { color: #f59e0b; }
+  .web-header .tagline { font-size: 0.75rem; color: #cbd5e1; margin-top: 0.15rem; }
+  .web-cta {
+    display: block; margin: 1rem 1.25rem 0; padding: 0.9rem;
+    background: #10b981; color: #fff; text-align: center;
+    border-radius: 12px; font-size: 1.1rem; font-weight: 800;
+    text-decoration: none; letter-spacing: 0.02em;
+  }
+  .web-cta .phone-icon { font-size: 1.2rem; margin-right: 0.35rem; }
+  .web-cta-sub {
+    text-align: center; font-size: 0.7rem; color: #64748b; margin-top: 0.35rem;
+    padding: 0 1.25rem;
+  }
+  .web-services {
+    padding: 1rem 1.25rem;
+  }
+  .web-services h3 { font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; }
+  .web-svc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .web-svc {
+    background: #f1f5f9; border-radius: 8px; padding: 0.6rem; text-align: center;
+    font-size: 0.72rem; color: #334155; font-weight: 600;
+  }
+  .web-svc .icon { font-size: 1.2rem; display: block; margin-bottom: 0.15rem; }
+  .web-book {
+    display: block; margin: 0.75rem 1.25rem; padding: 0.7rem;
+    background: #3b82f6; color: #fff; text-align: center;
+    border-radius: 10px; font-size: 0.9rem; font-weight: 700;
+    text-decoration: none;
+  }
+  .web-trust {
+    padding: 0.75rem 1.25rem; text-align: center;
+    border-top: 1px solid #e2e8f0;
+  }
+  .web-trust .stars { color: #f59e0b; font-size: 1rem; }
+  .web-trust .text { font-size: 0.7rem; color: #64748b; }
+  .web-footer {
+    background: #1e293b; padding: 0.75rem 1.25rem; text-align: center;
+    font-size: 0.65rem; color: #94a3b8;
+  }
+
+  /* Annotation arrow */
+  .annotated { display: flex; align-items: flex-start; gap: 2.5rem; }
+  .annotated .phone { flex-shrink: 0; }
+  .annotations { flex: 1; padding-top: 1rem; }
+  .ann {
+    background: #1e293b; border: 1px solid #334155; border-radius: 10px;
+    padding: 1rem 1.25rem; margin-bottom: 0.75rem; position: relative;
+  }
+  .ann::before {
+    content: ''; position: absolute; left: -16px; top: 50%; transform: translateY(-50%);
+    border: 8px solid transparent; border-right-color: #334155;
+  }
+  .ann h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .ann p { font-size: 0.82rem; color: #94a3b8; }
+  .ann.gr { border-left: 3px solid #10b981; }
+  .ann.bl { border-left: 3px solid #3b82f6; }
+  .ann.pu { border-left: 3px solid #8b5cf6; }
+  .ann.rd { border-left: 3px solid #ef4444; }
+  .ann.am { border-left: 3px solid #f59e0b; }
+
+  /* GBP mockup */
+  .gbp {
+    width: 380px; background: #fff; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3); margin: 0 auto;
+    color: #1e293b;
+  }
+  .gbp-hero {
+    height: 140px; background: linear-gradient(135deg, #1a365d, #2563eb);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 0.85rem; font-weight: 600;
+  }
+  .gbp-body { padding: 1.25rem; }
+  .gbp-name { font-size: 1.15rem; font-weight: 800; color: #1a202c; }
+  .gbp-cat { font-size: 0.75rem; color: #64748b; }
+  .gbp-rating { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0; }
+  .gbp-stars { color: #f59e0b; font-size: 0.9rem; }
+  .gbp-count { font-size: 0.75rem; color: #64748b; }
+  .gbp-status { font-size: 0.75rem; margin-bottom: 0.75rem; }
+  .gbp-status .open { color: #10b981; font-weight: 700; }
+  .gbp-actions {
+    display: flex; gap: 0.5rem; margin-bottom: 1rem;
+  }
+  .gbp-btn {
+    flex: 1; padding: 0.6rem; border-radius: 999px; text-align: center;
+    font-size: 0.75rem; font-weight: 700; cursor: pointer; border: none;
+    position: relative;
+  }
+  .gbp-btn.call { background: #3b82f6; color: #fff; }
+  .gbp-btn.web { background: #e2e8f0; color: #1e293b; }
+  .gbp-btn.book { background: #10b981; color: #fff; }
+
+  /* Highlight ring */
+  .ring {
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 0 0 rgba(59,130,246,0.4);
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(59,130,246,0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(59,130,246,0); }
+    100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+  }
+
+  .gbp-flow-label {
+    text-align: center; margin-top: 0.75rem; padding: 0.5rem;
+    background: #ef4444; color: #fff; border-radius: 8px;
+    font-size: 0.8rem; font-weight: 700;
+  }
+
+  /* GBP Audit */
+  .audit-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem;
+  }
+  .audit-item {
+    background: #1e293b; border: 1px solid #334155; border-radius: 10px;
+    padding: 1rem; display: flex; align-items: flex-start; gap: 0.75rem;
+  }
+  .audit-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .audit-icon.gr { background: #064e3b; }
+  .audit-icon.rd { background: #7f1d1d; }
+  .audit-icon.am { background: #78350f; }
+  .audit-detail h5 { font-size: 0.85rem; font-weight: 700; }
+  .audit-detail p { font-size: 0.75rem; color: #94a3b8; }
+
+  /* SMS transcript */
+  .sms-container {
+    width: 340px; margin: 0 auto;
+  }
+  .sms-thread {
+    background: #1e293b; border-radius: 16px; padding: 1.25rem;
+  }
+  .sms-header {
+    text-align: center; font-size: 0.8rem; color: #64748b; margin-bottom: 1rem;
+    padding-bottom: 0.75rem; border-bottom: 1px solid #334155;
+  }
+  .sms-header strong { color: #e2e8f0; font-size: 0.9rem; display: block; }
+  .msg {
+    max-width: 85%; padding: 0.65rem 0.9rem; border-radius: 16px;
+    margin-bottom: 0.5rem; font-size: 0.82rem; line-height: 1.5;
+    clear: both;
+  }
+  .msg.ai {
+    background: #334155; color: #e2e8f0; float: left;
+    border-bottom-left-radius: 4px;
+  }
+  .msg.cust {
+    background: #3b82f6; color: #fff; float: right;
+    border-bottom-right-radius: 4px;
+  }
+  .msg-clear { clear: both; }
+  .msg-time {
+    clear: both; text-align: center; font-size: 0.65rem;
+    color: #475569; margin: 0.75rem 0 0.5rem;
+  }
+
+  /* Pre-job SMS */
+  .sms-updates {
+    width: 340px; margin: 0 auto;
+    background: #1e293b; border-radius: 16px; padding: 1.25rem;
+  }
+  .sms-update-header {
+    text-align: center; padding-bottom: 0.75rem; border-bottom: 1px solid #334155;
+    margin-bottom: 0.75rem;
+  }
+  .sms-update-header strong { color: #e2e8f0; font-size: 0.9rem; }
+  .sms-update-header .sub { font-size: 0.7rem; color: #64748b; }
+  .notif {
+    background: #0f172a; border: 1px solid #334155; border-radius: 12px;
+    padding: 0.85rem 1rem; margin-bottom: 0.5rem;
+  }
+  .notif-time { font-size: 0.65rem; color: #64748b; }
+  .notif-text { font-size: 0.82rem; margin-top: 0.2rem; }
+  .notif-text strong { color: #10b981; }
+
+  /* Key Results */
+  .kr-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 1.5rem;
+  }
+  .kr {
+    background: #1e293b; border: 1px solid #334155; border-radius: 12px;
+    padding: 1.25rem; text-align: center;
+  }
+  .kr .metric { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem; }
+  .kr .value { font-size: 1.4rem; font-weight: 800; }
+  .kr .value.gr { color: #10b981; }
+  .kr .value.bl { color: #3b82f6; }
+  .kr .value.pu { color: #c4b5fd; }
+  .kr .value.am { color: #f59e0b; }
+  .kr .value.rd { color: #fca5a5; }
+  .kr .value.pk { color: #f9a8d4; }
+  .kr .target { font-size: 0.72rem; color: #64748b; margin-top: 0.25rem; }
+
+  /* Side by side */
+  .side { display: flex; gap: 2.5rem; align-items: flex-start; }
+  .side .left { flex-shrink: 0; }
+  .side .right { flex: 1; padding-top: 0.5rem; }
+
+  /* Bottom */
+  .bottom-cta {
+    text-align: center; padding: 3rem 2rem; margin-top: 2rem;
+    border-top: 1px solid #1e293b;
+  }
+  .bottom-cta h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .bottom-cta h2 span { color: #10b981; }
+  .bottom-cta p { color: #94a3b8; font-size: 0.95rem; max-width: 600px; margin: 0 auto; }
+
+  @media (max-width: 800px) {
+    .annotated, .side { flex-direction: column; align-items: center; }
+    .annotations { padding-top: 1.5rem; }
+    .ann::before { display: none; }
+    .audit-grid, .kr-grid { grid-template-columns: 1fr; }
+    .gbp { width: 100%; max-width: 380px; }
+  }
+</style>
+</head>
+<body>
+<script src="gate.js"></script>
+
+<!-- ===== HERO ===== -->
+<div class="container">
+  <div class="hero">
+    <h1>The <span>AI-First</span> Pro Experience</h1>
+    <div class="sub">
+      A brand new, end-to-end onboarding experience for new pros. AI-native from day one.
+      Every touchpoint automated. Every lead captured. Every customer retained.
+    </div>
+    <div class="badges">
+      <div class="badge gr">Target: End of Q2 2026</div>
+      <div class="badge bl">~4,000 new pros/month</div>
+      <div class="badge pu">100% AI-powered</div>
+    </div>
+  </div>
+
+  <!-- ===== 1. CLICK-TO-CALL WEBSITE ===== -->
+  <div class="section">
+    <div class="section-label gr">Step 1</div>
+    <div class="section-title">HCP Builds a Click-to-Call Website</div>
+    <div class="section-desc">
+      ~40% of new pros sign up without a website. HCP immediately generates a mobile-optimized,
+      SEO-ready site. The phone number is the HCP VoIP &mdash; every call goes through CSR AI.
+    </div>
+
+    <div class="annotated">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="web-header">
+            <div class="logo"><span>Comfort</span>Zone HVAC</div>
+            <div class="tagline">Heating &amp; Cooling Experts &bull; Phoenix, AZ</div>
+          </div>
+          <div class="web-cta">
+            <span class="phone-icon">&#9742;</span> Call Now &mdash; (480) 555-0192
+          </div>
+          <div class="web-cta-sub">24/7 Live Answering &bull; Free Estimates</div>
+          <div class="web-services">
+            <h3>Our Services</h3>
+            <div class="web-svc-grid">
+              <div class="web-svc"><span class="icon">&#10052;</span>AC Repair</div>
+              <div class="web-svc"><span class="icon">&#9728;</span>Heating</div>
+              <div class="web-svc"><span class="icon">&#128296;</span>Installation</div>
+              <div class="web-svc"><span class="icon">&#128260;</span>Maintenance</div>
+            </div>
+          </div>
+          <a class="web-book">Book Online</a>
+          <div class="web-trust">
+            <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <div class="text">Licensed &bull; Insured &bull; 15+ Years</div>
+          </div>
+          <div class="web-footer">Powered by HouseCall Pro &bull; Serving Phoenix Metro</div>
+        </div>
+      </div>
+
+      <div class="annotations">
+        <div class="ann gr">
+          <h4>Click-to-Call with VoIP</h4>
+          <p>The phone number is HCP's VoIP line. When a customer taps "Call Now", the call routes directly to <strong style="color:#fca5a5;">CSR AI</strong> &mdash; not the pro's personal phone. 24/7 answering, no missed calls.</p>
+        </div>
+        <div class="ann bl">
+          <h4>SEO-Optimized</h4>
+          <p>Built to rank for "[HVAC] + [Phoenix AZ]" searches. Title tags, meta descriptions, structured data all set automatically.</p>
+        </div>
+        <div class="ann pu">
+          <h4>Book Online</h4>
+          <p>Links to the pro's HCP booking page. Another path to conversion that doesn't require a phone call.</p>
+        </div>
+        <div class="ann am">
+          <h4>Auto-Generated from Signup Data</h4>
+          <p>Business name, services, location, and trust signals pulled from what the pro entered at signup. No design work needed.</p>
+        </div>
+        <div class="ann rd">
+          <h4>This URL Goes on GBP</h4>
+          <p>This becomes the website link on their Google Business Profile. Google sees a real website &rarr; higher local pack ranking.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 2. GBP AUDIT ===== -->
+  <div class="section">
+    <div class="section-label pu">Step 2</div>
+    <div class="section-title">Marketing AI Audits &amp; Optimizes Their GBP</div>
+    <div class="section-desc">
+      After the pro grants Google auth, Marketing AI scans their profile and identifies gaps.
+      It then recommends or directly makes changes to maximize impressions and conversions.
+    </div>
+
+    <div class="audit-grid">
+      <div class="audit-item">
+        <div class="audit-icon rd">&#10060;</div>
+        <div class="audit-detail">
+          <h5>No Website URL</h5>
+          <p>GBP has no website linked. <strong style="color:#10b981;">Fix: Set to HCP click-to-call site</strong></p>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon rd">&#10060;</div>
+        <div class="audit-detail">
+          <h5>Personal Cell on Profile</h5>
+          <p>Pro's personal number = missed calls after hours. <strong style="color:#10b981;">Fix: Swap to VoIP (CSR AI answers 24/7)</strong></p>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon am">&#9888;</div>
+        <div class="audit-detail">
+          <h5>Incomplete Business Hours</h5>
+          <p>Only Mon-Fri listed. <strong style="color:#10b981;">Fix: Add weekend hours, mark "open 24/7" for emergency</strong></p>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon am">&#9888;</div>
+        <div class="audit-detail">
+          <h5>No Photos</h5>
+          <p>Listings with photos get 42% more direction requests. <strong style="color:#10b981;">Fix: Prompt pro to upload or use job photos</strong></p>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon rd">&#10060;</div>
+        <div class="audit-detail">
+          <h5>Reserve with Google: OFF</h5>
+          <p>Direct booking not enabled. <strong style="color:#10b981;">Fix: Enable Reserve with Google via HCP integration</strong></p>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon am">&#9888;</div>
+        <div class="audit-detail">
+          <h5>No Recent Posts</h5>
+          <p>Last post: never. Google rewards active profiles. <strong style="color:#10b981;">Fix: AI auto-posts after each completed job</strong></p>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon gr">&#9989;</div>
+        <div class="audit-detail">
+          <h5>Business Name: Good</h5>
+          <p>Matches registration. No keyword stuffing.</p>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon am">&#9888;</div>
+        <div class="audit-detail">
+          <h5>Only 3 Reviews</h5>
+          <p>Below competitive threshold. <strong style="color:#10b981;">Fix: AI review request after every job (target 50% conversion)</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 3. GBP LISTING ===== -->
+  <div class="section">
+    <div class="section-label">Step 3</div>
+    <div class="section-title">What Customers See on Google &mdash; Every Button Leads to HCP</div>
+    <div class="section-desc">
+      After optimization, the customer sees a polished GBP listing. Every action &mdash; call, website, book &mdash; routes through HCP.
+    </div>
+
+    <div class="side">
+      <div class="left">
+        <div class="gbp">
+          <div class="gbp-hero">
+            &#128247; ComfortZone HVAC &mdash; Phoenix, AZ
+          </div>
+          <div class="gbp-body">
+            <div class="gbp-name">ComfortZone HVAC</div>
+            <div class="gbp-cat">HVAC contractor &bull; Phoenix, AZ</div>
+            <div class="gbp-rating">
+              <div class="gbp-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+              <div class="gbp-count">4.9 (47 reviews)</div>
+            </div>
+            <div class="gbp-status"><span class="open">Open</span> &bull; Closes 10 PM &bull; <span style="color:#3b82f6;">24/7 Emergency</span></div>
+            <div class="gbp-actions">
+              <button class="gbp-btn call ring">&#9742; Call</button>
+              <button class="gbp-btn web">&#127760; Website</button>
+              <button class="gbp-btn book ring" style="animation-delay:1s;">&#128197; Book</button>
+            </div>
+            <div style="font-size:0.75rem;color:#64748b;border-top:1px solid #e2e8f0;padding-top:0.75rem;">
+              <div><strong>Address:</strong> 4521 E Indian School Rd, Phoenix, AZ 85018</div>
+              <div style="margin-top:0.25rem;"><strong>Phone:</strong> (480) 555-0192</div>
+              <div style="margin-top:0.25rem;"><strong>Website:</strong> <span style="color:#3b82f6;">comfortzonehvac.housecallpro.com</span></div>
+            </div>
+          </div>
+          <div class="gbp-flow-label">All 3 buttons &rarr; CSR AI</div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ann gr" style="margin-top:0;">
+          <h4>&#9742; "Call" &rarr; VoIP &rarr; CSR AI</h4>
+          <p>Customer taps Call. Rings the VoIP number. CSR AI answers instantly, 24/7. Collects the issue, finds availability, books the job.</p>
+        </div>
+        <div class="ann bl">
+          <h4>&#127760; "Website" &rarr; HCP Click-to-Call Site</h4>
+          <p>Opens the SEO website HCP built. Customer sees services, reviews, and a big "Call Now" button &mdash; which calls the same VoIP &rarr; CSR AI.</p>
+        </div>
+        <div class="ann pu">
+          <h4>&#128197; "Book" &rarr; Reserve with Google &rarr; HCP Calendar</h4>
+          <p>Customer books directly from Google. Slot lands on the pro's HCP calendar. Confirmation SMS sent via CSR AI. No phone call needed.</p>
+        </div>
+        <div class="ann rd">
+          <h4>The key insight</h4>
+          <p>Every possible action a customer can take on this listing <strong style="color:#fca5a5;">feeds into HCP</strong>. There is no path that leaks outside the system. The pro doesn't need to answer their phone, check their email, or manage their calendar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 4. CSR AI TRANSCRIPT ===== -->
+  <div class="section">
+    <div class="section-label rd">Step 4</div>
+    <div class="section-title">CSR AI Handles the Call</div>
+    <div class="section-desc">
+      Customer calls the VoIP number from GBP or the website. CSR AI picks up. Here's what a great call looks like.
+    </div>
+
+    <div class="side">
+      <div class="left">
+        <div class="sms-container">
+          <div class="sms-thread">
+            <div class="sms-header">
+              <strong>Voice Call &mdash; CSR AI</strong>
+              Inbound from (602) 555-7831 &bull; 2:47 PM
+            </div>
+
+            <div class="msg ai">Hi, thanks for calling ComfortZone HVAC! How can I help you today?</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg cust">Yeah, my AC stopped blowing cold air this morning. It's like 95 degrees out here.</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg ai">Oh no, that's miserable in this heat. Let me see what we can do for you. Is this for a home or a business?</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg cust">It's my house. In Scottsdale.</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg ai">Great, we absolutely service Scottsdale. I can see we have an opening tomorrow morning between 8 and 10 AM &mdash; would that work for you?</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg cust">Tomorrow morning would be perfect.</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg ai">Awesome, let me get that booked for you. Can I get your name and the best address for the visit?</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg cust">Sarah Mitchell, 7422 E Camelback Road.</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg ai">Perfect, Sarah. You're all set for tomorrow, Thursday, between 8 and 10 AM at 7422 E Camelback. I'll send you a text confirmation right now. Anything else I can help with?</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg cust">Nope, that's it. Thank you!</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg ai">You're welcome! Stay cool, and we'll see you tomorrow. Bye!</div>
+            <div class="msg-clear"></div>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ann gr" style="margin-top:0;">
+          <h4>Value first, details second</h4>
+          <p>CSR AI understands the issue and finds availability <strong>before</strong> asking for name/address. The customer knows they're getting helped before giving any personal info.</p>
+        </div>
+        <div class="ann bl">
+          <h4>Pro context = confident answers</h4>
+          <p>"We absolutely service Scottsdale" and "opening tomorrow morning" &mdash; specific, confident responses because CSR AI has the pro's service area and real-time calendar.</p>
+        </div>
+        <div class="ann pu">
+          <h4>Natural conversation, not a form</h4>
+          <p>Feels like talking to a friendly receptionist, not filling out fields. Empathy ("that's miserable in this heat"), confirmation, smooth close.</p>
+        </div>
+        <div class="ann am">
+          <h4>2 minutes &rarr; booked job</h4>
+          <p>From "my AC isn't working" to a confirmed appointment in under 2 minutes. No hold music. No voicemail. No callback.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 5. PRE-JOB SMS UPDATES ===== -->
+  <div class="section">
+    <div class="section-label cy">Step 5</div>
+    <div class="section-title">Customer Gets SMS Updates Before the Job</div>
+    <div class="section-desc">
+      After booking, automated SMS keeps the customer engaged. This makes the pro look incredibly professional
+      and ensures the customer "sits" for the appointment &mdash; reducing no-shows and improving sales conversion.
+    </div>
+
+    <div class="side">
+      <div class="left">
+        <div class="sms-updates">
+          <div class="sms-update-header">
+            <strong>ComfortZone HVAC</strong>
+            <div class="sub">Text Messages</div>
+          </div>
+
+          <div class="notif">
+            <div class="notif-time">Wed 2:48 PM</div>
+            <div class="notif-text">Hi Sarah! Your AC repair appointment is confirmed for <strong>tomorrow (Thu) 8-10 AM</strong> at 7422 E Camelback Rd. Reply with any questions!</div>
+          </div>
+
+          <div class="notif">
+            <div class="notif-time">Wed 2:49 PM</div>
+            <div class="notif-text">Can you send a photo of your AC unit so our tech can prepare? Just reply with a pic.</div>
+          </div>
+
+          <div class="notif">
+            <div class="notif-time">Wed 7:00 PM</div>
+            <div class="notif-text">Reminder: ComfortZone HVAC is coming <strong>tomorrow 8-10 AM</strong>. We'll text you when our tech is on the way.</div>
+          </div>
+
+          <div class="notif">
+            <div class="notif-time">Thu 7:45 AM</div>
+            <div class="notif-text">Good morning Sarah! Your tech <strong>Mike</strong> is heading your way and should arrive by <strong>8:15 AM</strong>. See you soon!</div>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ann gr" style="margin-top:0;">
+          <h4>Photo request = pro arrives prepared</h4>
+          <p>Tech knows what to expect before showing up. Faster diagnosis, better first impression.</p>
+        </div>
+        <div class="ann bl">
+          <h4>Reminders reduce no-shows</h4>
+          <p>Multiple touchpoints confirm the appointment and keep it top of mind. Customer feels committed.</p>
+        </div>
+        <div class="ann pu">
+          <h4>"On the way" text = professional experience</h4>
+          <p>Customer thinks: "Wow, this company really has their act together." That perception directly increases the chance they say yes to the estimate.</p>
+        </div>
+        <div class="ann am">
+          <h4>Pro didn't send any of this</h4>
+          <p>All automated. The pro just shows up and does the work. HCP handles all customer communication.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 5b. RESCHEDULE / NO-SHOW ASIDE ===== -->
+  <div class="section" style="padding:2rem 0;">
+    <div style="background:#1e293b;border:1px solid #334155;border-left:4px solid #ef4444;border-radius:12px;padding:1.5rem 2rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+        <span style="font-size:1.2rem;">&#128260;</span>
+        <h3 style="font-size:1rem;font-weight:700;">Aside: No-Show &amp; Reschedule Loop</h3>
+        <span style="background:#ef4444;color:#fff;font-size:0.65rem;font-weight:800;padding:0.15rem 0.5rem;border-radius:4px;text-transform:uppercase;">AI-Powered</span>
+      </div>
+      <p style="color:#94a3b8;font-size:0.88rem;margin-bottom:0.75rem;">If a customer no-shows, AI automatically kicks off a rebook cycle. No manual intervention needed.</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:0.85rem;">
+          <div style="font-size:0.7rem;color:#ef4444;font-weight:700;text-transform:uppercase;margin-bottom:0.25rem;">Hour 1</div>
+          <div style="font-size:0.82rem;">"Hi Sarah, we missed you today! Would you like to reschedule your AC repair? Reply with a time that works."</div>
+        </div>
+        <div style="flex:1;min-width:200px;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:0.85rem;">
+          <div style="font-size:0.7rem;color:#f59e0b;font-weight:700;text-transform:uppercase;margin-bottom:0.25rem;">Day 2</div>
+          <div style="font-size:0.82rem;">"Just checking in &mdash; we still have openings this week for your AC repair. Want us to book you in?"</div>
+        </div>
+        <div style="flex:1;min-width:200px;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:0.85rem;">
+          <div style="font-size:0.7rem;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:0.25rem;">If no reply</div>
+          <div style="font-size:0.82rem;">Moves to general lead nurture pipeline. Low-touch, regular cadence to stay warm.</div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;display:flex;align-items:center;gap:0.5rem;">
+        <span style="background:#0f172a;border:1px solid #ef4444;border-radius:8px;padding:0.4rem 0.75rem;font-size:0.8rem;color:#fca5a5;">Target: recapture ~25% of no-shows</span>
+        <span style="font-size:0.8rem;color:#64748b;">Free revenue recovery &mdash; these leads already exist</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 6. REVIEW REQUEST SMS ===== -->
+  <div class="section">
+    <div class="section-label pk">Step 6a</div>
+    <div class="section-title">AI Review Request via SMS</div>
+    <div class="section-desc">
+      After the job, AI sends a review request. If no response, it follows up. Target: 50% conversion (up from 30%).
+    </div>
+
+    <div class="side">
+      <div class="left">
+        <div class="sms-container">
+          <div class="sms-thread">
+            <div class="sms-header">
+              <strong>ComfortZone HVAC</strong>
+              Text Messages
+            </div>
+
+            <div class="msg ai">Hi Sarah! Thanks for choosing ComfortZone HVAC today. We hope your AC is running great! &#10052;&#65039; Would you mind leaving us a quick review? It really helps: <span style="color:#38bdf8;">[review link]</span></div>
+            <div class="msg-clear"></div>
+
+            <div class="msg-time">2 days later</div>
+
+            <div class="msg ai">Hey Sarah, just a quick follow-up! If you have 30 seconds, a review would mean the world to us: <span style="color:#38bdf8;">[review link]</span> &#11088;</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg cust">Just left you 5 stars! Mike was great.</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg ai">Thank you so much Sarah! We really appreciate it. We'll be here whenever you need us! &#128578;</div>
+            <div class="msg-clear"></div>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ann gr" style="margin-top:0;">
+          <h4>AI follow-ups = 30% &rarr; 50% conversion</h4>
+          <p>Most review requests are one-and-done. AI sends a tasteful follow-up 2 days later. That alone can nearly double the conversion rate.</p>
+        </div>
+        <div class="ann pu">
+          <h4>Review goes to Google</h4>
+          <p>This 5-star review posts to the pro's GBP. More reviews = higher local ranking = more impressions = more calls. The flywheel spins.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 6b. GBP AUTO-POST ===== -->
+  <div class="section">
+    <div class="section-label pu">Step 6b</div>
+    <div class="section-title">AI Creates a Google Business Profile Update</div>
+    <div class="section-desc">
+      After every completed job, AI automatically generates a GBP post with job details and photos.
+      This signals to Google that the business is active, boosting rankings.
+    </div>
+
+    <div class="side">
+      <div class="left">
+        <div style="width:360px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.3);color:#1e293b;">
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:0.75rem;">
+            <div style="width:40px;height:40px;background:#1a365d;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.8rem;font-weight:700;">CZ</div>
+            <div>
+              <div style="font-weight:700;font-size:0.9rem;">ComfortZone HVAC</div>
+              <div style="font-size:0.7rem;color:#64748b;">Posted just now</div>
+            </div>
+          </div>
+          <div style="height:180px;background:linear-gradient(135deg,#e2e8f0,#cbd5e1);display:flex;align-items:center;justify-content:center;font-size:3rem;">&#128247;</div>
+          <div style="padding:1rem 1.25rem;">
+            <div style="font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">AC Repair in Scottsdale &#10052;&#65039;</div>
+            <div style="font-size:0.82rem;color:#475569;line-height:1.6;">
+              Just completed an AC repair for a homeowner in Scottsdale! Their unit stopped cooling &mdash;
+              our tech Mike diagnosed a faulty capacitor and had it fixed in under an hour. Stay cool, Phoenix! &#127774;
+              <br><br>
+              <span style="color:#3b82f6;">#HVAC #ACRepair #Scottsdale #Phoenix #ComfortZoneHVAC</span>
+            </div>
+          </div>
+          <div style="padding:0 1.25rem 1rem;display:flex;gap:0.5rem;">
+            <span style="background:#f1f5f9;padding:0.4rem 0.8rem;border-radius:999px;font-size:0.75rem;font-weight:600;color:#3b82f6;">&#128077; Like</span>
+            <span style="background:#f1f5f9;padding:0.4rem 0.8rem;border-radius:999px;font-size:0.75rem;font-weight:600;color:#475569;">&#128172; Comment</span>
+            <span style="background:#f1f5f9;padding:0.4rem 0.8rem;border-radius:999px;font-size:0.75rem;font-weight:600;color:#475569;">&#8599; Share</span>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ann pu" style="margin-top:0;">
+          <h4>Auto-generated from job data</h4>
+          <p>AI writes the post using the job type, location, and outcome. Photos come from the tech's job completion photos in HCP. Pro does nothing.</p>
+        </div>
+        <div class="ann gr">
+          <h4>Google rewards active profiles</h4>
+          <p>Profiles with regular posts rank higher in local pack. Every completed job = fresh content. A pro doing 5 jobs/week has 5 new posts/week. Competitors with stale profiles can't keep up.</p>
+        </div>
+        <div class="ann bl">
+          <h4>SEO keywords baked in</h4>
+          <p>AI includes service type + city name. "AC Repair in Scottsdale" is exactly what customers search for. These posts compound over time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 7. MARKETING SMS + LOOP BACK ===== -->
+  <div class="section">
+    <div class="section-label cy">Step 7</div>
+    <div class="section-title">AI Marketing Campaigns &rarr; Customer Re-Engages &rarr; Back to CSR AI</div>
+    <div class="section-desc">
+      At 30, 180, and 360 days, AI sends personalized SMS/email using full customer context.
+      When the customer engages, it goes right back into CSR AI &mdash; starting the whole cycle over again.
+    </div>
+
+    <div class="side">
+      <div class="left">
+        <div class="sms-container">
+          <div class="sms-thread">
+            <div class="sms-header">
+              <strong>ComfortZone HVAC</strong>
+              Text Messages &mdash; 6 months later
+            </div>
+
+            <div class="msg-time">October 15 &mdash; Seasonal Campaign</div>
+
+            <div class="msg ai">Hey Sarah! Winter's around the corner &#127774;&#10052;&#65039; We serviced your AC back in April &mdash; now's the perfect time to get your furnace tuned up before the cold hits. Want me to book you in?</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg cust">Actually yeah, good reminder. What does a furnace tune-up cost?</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg ai">Great question! A furnace tune-up with ComfortZone is $89. It includes a full inspection, filter change, and safety check. Our next opening is this Friday between 9 and 11 AM &mdash; does that work?</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg cust">Friday works. Same address.</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg ai">Perfect! You're booked for Friday 9-11 AM at 7422 E Camelback. I'll send a confirmation and reminder before the visit. Thanks Sarah!</div>
+            <div class="msg-clear"></div>
+
+            <div class="msg-time" style="margin-top:1rem;padding:0.75rem;background:#0f2922;border:1px solid #10b981;border-radius:8px;font-size:0.8rem;color:#6ee7b7;">
+              &#128260; <strong>Full cycle complete.</strong> Customer re-engaged via AI marketing &rarr; CSR AI booked the job &rarr; pre-job SMS flow begins again &rarr; job &rarr; review &rarr; GBP post &rarr; next campaign
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ann gr" style="margin-top:0;">
+          <h4>Personalized = high converting</h4>
+          <p>"We serviced your AC back in April" &mdash; this isn't a generic blast. AI knows exactly what work was done, when, and tailors the message. That's why these convert.</p>
+        </div>
+        <div class="ann rd">
+          <h4>Reply goes straight to CSR AI</h4>
+          <p>When Sarah replies "yeah, good reminder" &mdash; that text goes to CSR AI. It picks up the conversation, answers the pricing question, checks availability, and books. Same system, same quality.</p>
+        </div>
+        <div class="ann pu">
+          <h4>The infinite loop</h4>
+          <p>Marketing SMS &rarr; customer engages &rarr; CSR AI books &rarr; pre-job SMS &rarr; job done &rarr; review + GBP post &rarr; next campaign &rarr; repeat. Every customer is on this loop forever. Revenue compounds.</p>
+        </div>
+        <div class="ann am">
+          <h4>Pro does nothing. Revenue grows.</h4>
+          <p>Sarah became a repeat customer 6 months later without the pro lifting a finger. No marketing spend. No cold calls. No email blasts. Just AI working the existing base.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== KEY RESULTS ===== -->
+  <div class="section">
+    <div class="section-label">Key Results &mdash; Q2 2026</div>
+    <div class="section-title">What We're Measuring</div>
+    <div class="section-desc">These are the metrics that tell us this is working.</div>
+
+    <div class="kr-grid">
+      <div class="kr">
+        <div class="metric">Website Attach Rate</div>
+        <div class="value gr">&#8593;</div>
+        <div class="target">% of new pros with an HCP website at day 1</div>
+      </div>
+      <div class="kr">
+        <div class="metric">VoIP Attach Rate</div>
+        <div class="value gr">&#8593;</div>
+        <div class="target">% of new pros with VoIP number active</div>
+      </div>
+      <div class="kr">
+        <div class="metric">Google Auth %</div>
+        <div class="value pu">&#8593;</div>
+        <div class="target">% of pros granting GBP access within 30 days</div>
+      </div>
+      <div class="kr">
+        <div class="metric">OLB Usage</div>
+        <div class="value bl">&#8593;</div>
+        <div class="target">Online booking adoption rate</div>
+      </div>
+      <div class="kr">
+        <div class="metric">CSR AI Conversion</div>
+        <div class="value am">55% &rarr; 80%</div>
+        <div class="target">Booking rate on non-silent, non-existing-customer calls</div>
+      </div>
+      <div class="kr">
+        <div class="metric">Booked Jobs / Messages</div>
+        <div class="value gr">&#8593;&#8593;</div>
+        <div class="target">On non-silent calls, dramatically higher</div>
+      </div>
+      <div class="kr">
+        <div class="metric">Review Conversion</div>
+        <div class="value pk">30% &rarr; 50%</div>
+        <div class="target">With AI follow-ups on review requests</div>
+      </div>
+      <div class="kr">
+        <div class="metric">Existing Customer Revenue</div>
+        <div class="value am">&#8593;</div>
+        <div class="target">Revenue from 30/180/360 day campaigns</div>
+      </div>
+      <div class="kr">
+        <div class="metric">No-Show Recovery</div>
+        <div class="value rd">~25%</div>
+        <div class="target">Of no-shows rebooked via AI follow-up</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BOTTOM ===== -->
+  <div class="bottom-cta">
+    <h2>This is <span>the magic sauce</span>.</h2>
+    <p>
+      A pro signs up. Without doing anything, jobs start appearing on their calendar.
+      Customers get professional communication. Reviews pile up. Google ranking climbs.
+      Existing customers come back automatically.
+      <br><br>
+      <strong style="color:#e2e8f0;">HCP doesn't just run the pro's business. It grows it.</strong>
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
