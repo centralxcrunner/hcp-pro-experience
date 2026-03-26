@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCP AI — Pro Context Service</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f5f7; color: #1a1a2e; font-size: 14px; }
+
+  .header { background: linear-gradient(135deg, #0f2027 0%, #1a3a2e 100%); color: white; padding: 32px 48px 28px; }
+  .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .header .meta { color: #94a3b8; font-size: 12px; }
+
+  .container { max-width: 1000px; margin: 0 auto; padding: 28px 24px; }
+
+  .section { background: white; border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+  .section-title { font-size: 14px; font-weight: 700; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
+
+  /* Flow diagram */
+  .flow { display: flex; align-items: center; gap: 0; margin-bottom: 0; flex-wrap: wrap; }
+  .flow-step { text-align: center; position: relative; flex-shrink: 0; }
+  .box { border-radius: 8px; padding: 10px 12px; font-size: 12px; line-height: 1.4; border: 1px solid #e2e8f0; background: #f8fafc; }
+  .box.trigger { background: #0f2027; color: white; border-color: #0f2027; min-width: 110px; }
+  .box.found { background: #f0fdf4; border-color: #bbf7d0; color: #065f46; min-width: 130px; }
+  .box.injected { background: #ecfdf5; border-color: #6ee7b7; color: #047857; min-width: 150px; }
+  .step-label { font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+  .arrow { padding: 0 10px; color: #94a3b8; font-size: 16px; line-height: 1; flex-shrink: 0; margin-top: 18px; }
+
+  /* Field table */
+  .field-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .field-table th { background: #f8fafc; text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  .field-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  .field-table tr:last-child td { border-bottom: none; }
+  .field-table .fname { font-weight: 600; color: #1e293b; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
+  .field-table .fdesc { color: #475569; line-height: 1.4; }
+  .field-table .fobj { color: #047857; font-size: 10px; font-weight: 700; }
+  .badge { display: inline-block; padding: 1px 7px; border-radius: 99px; font-size: 10px; font-weight: 700; }
+  .badge-p1 { background: #dbeafe; color: #1d4ed8; }
+  .badge-eng { background: #fef3c7; color: #d97706; }
+  .badge-sensitive { background: #fee2e2; color: #dc2626; }
+
+  .obj-divider { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: #94a3b8; padding: 12px 12px 4px; background: #f8fafc; border-bottom: 1px solid #f1f5f9; }
+
+  /* Q list */
+  .q-list { list-style: none; }
+  .q-list li { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px; color: #374151; line-height: 1.5; }
+  .q-list li:last-child { border-bottom: none; }
+  .q-num { font-weight: 700; color: #059669; flex-shrink: 0; width: 18px; }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #475569; }
+
+  .note { background: #fefce8; border-left: 3px solid #fbbf24; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12px; color: #78350f; line-height: 1.5; margin-top: 14px; }
+  .note-green { background: #f0fdf4; border-left: 3px solid #4ade80; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12px; color: #065f46; line-height: 1.5; margin-top: 14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>HCP AI — Pro Context Service</h1>
+  <div class="meta">Engineering Requirement · Chris Kosednar → Montrell Williams · 2026-03-17</div>
+  <div style="color:#cbd5e1;font-size:13px;margin-top:10px;line-height:1.6;max-width:820px;">
+    A shared backend service that pre-loads everything the AI needs to know about the Pro's business before it handles any interaction. The AI should never need to make a mid-call tool call to find out what services a Pro offers, what their hours are, or whether they cover a zip code. All of that lives here, injected at session start.
+  </div>
+  <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+    <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 14px;font-size:12px;color:#e2e8f0;">📞 <strong>Voice (HCP AI)</strong> — inbound calls today</div>
+    <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 14px;font-size:12px;color:#e2e8f0;">💬 <strong>SMS (HCP AI)</strong> — inbound texts, coming soon</div>
+    <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 14px;font-size:12px;color:#94a3b8;">⚡ <strong>Future channels</strong> — any AI interaction acting on behalf of this Pro</div>
+  </div>
+  <div style="margin-top:14px;font-size:12px;color:#94a3b8;line-height:1.6;max-width:820px;">
+    Unlike customer context — which requires identity resolution — Pro context is always known. The org_id is determined at session start (the Pro's HCP AI phone number maps to an org). There is no ambiguity. Load it once, keep it current.
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- MECHANISM -->
+  <div class="section">
+    <div class="section-title">⚡ How It Works — Load at Session Start</div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-label">Inbound interaction</div>
+        <div class="box trigger">📱 Call or SMS<br>received on<br>HCP AI number</div>
+      </div>
+      <div><div class="arrow">→</div></div>
+      <div class="flow-step">
+        <div class="step-label">Org resolved</div>
+        <div class="box found"><strong>org_id known</strong><br>HCP AI number<br>maps to one Pro</div>
+      </div>
+      <div><div class="arrow">→</div></div>
+      <div class="flow-step">
+        <div class="step-label">Context assembled</div>
+        <div class="box">Fetch Pro context<br>payload from<br>HCP backend</div>
+      </div>
+      <div><div class="arrow">→</div></div>
+      <div class="flow-step">
+        <div class="step-label">AI ready</div>
+        <div class="box injected"><strong>Context injected</strong><br>into system prompt<br>before first word</div>
+      </div>
+    </div>
+
+    <div class="note-green" style="margin-top:20px;">
+      <strong>Goal:</strong> Zero mid-interaction tool calls for Pro info. The AI should already know what services this Pro offers, what their service area is, and when they're available. Dead air from mid-call lookups for basic Pro details is the problem this solves.
+    </div>
+  </div>
+
+  <!-- FIELD TABLE -->
+  <div class="section">
+    <div class="section-title">🗂️ Pro Context Payload — Fields to Return</div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="badge badge-p1">P1</span> Include in v1</div>
+      <div class="legend-item"><span class="badge badge-eng">ENG</span> Engineering to assess feasibility / latency</div>
+      <div class="legend-item"><span class="badge badge-sensitive">SENSITIVE</span> Flag — do not surface raw value to AI; use as logic gate only</div>
+    </div>
+
+    <p style="font-size:12px;color:#64748b;margin-bottom:14px;">All fields scoped to the Pro's org. Engineering to propose context window limits and truncation priority if budget is exceeded.</p>
+
+    <table class="field-table">
+      <thead>
+        <tr>
+          <th style="width:200px;">Field</th>
+          <th>Description / Why It Matters</th>
+          <th style="width:70px;">Priority</th>
+          <th class="fobj" style="width:110px;">Object</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td colspan="4" class="obj-divider">🏢 Business Identity</td></tr>
+        <tr><td class="fname">org_id</td><td class="fdesc">Primary key — always known at session start</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">business</td></tr>
+        <tr><td class="fname">business_name</td><td class="fdesc">How the AI introduces the company — "Thanks for calling [business_name]"</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">business</td></tr>
+        <tr><td class="fname">ai_persona_name</td><td class="fdesc">The name the AI uses for itself, if configured — "This is Alex with [Co]"</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">business</td></tr>
+        <tr><td class="fname">phone, email, website</td><td class="fdesc">Contact info — AI may need to relay or confirm these</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">business</td></tr>
+        <tr><td class="fname">business_address</td><td class="fdesc">Physical location — "where are you located?" is a common question</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">business</td></tr>
+        <tr><td class="fname">tagline / description</td><td class="fdesc">How the Pro describes their business — used to personalize the AI's voice</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">business</td></tr>
+        <tr><td class="fname">years_in_business</td><td class="fdesc">Trust signal — AI can reference "serving the community for X years"</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">business</td></tr>
+        <tr><td class="fname">licenses_and_certifications[]</td><td class="fdesc">Licensed, bonded, insured — customers frequently ask; AI should answer with confidence</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">business</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">📍 Service Area</td></tr>
+        <tr><td class="fname">service_zip_codes[]</td><td class="fdesc">The definitive list of zips this Pro covers — used to gate whether AI can book a call</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">service_area</td></tr>
+        <tr><td class="fname">service_cities[]</td><td class="fdesc">Human-readable city/region list — "Do you serve [city]?" is one of the most common questions</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">service_area</td></tr>
+        <tr><td class="fname">service_radius_miles</td><td class="fdesc">If configured — radial coverage from business address</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">service_area</td></tr>
+        <tr><td class="fname">travel_fee_outside_primary</td><td class="fdesc">Whether a fee applies for edge-of-area calls — AI should know before promising a booking</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">service_area</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">🔧 Services Offered (Pricebook)</td></tr>
+        <tr><td class="fname">service_categories[]</td><td class="fdesc">Top-level trade categories — HVAC, Plumbing, Electrical, etc. The AI must know what this Pro does and does not do</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">pricebook</td></tr>
+        <tr><td class="fname">services[] → name, description</td><td class="fdesc">Individual service names and descriptions — enables the AI to match caller's problem to what the Pro offers</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">pricebook</td></tr>
+        <tr><td class="fname">services[] → price, price_type</td><td class="fdesc">Flat rate, range, or "call for quote" — AI should know if a price can be quoted or not. Do not quote specific prices unless explicitly enabled by Pro.</td><td><span class="badge badge-sensitive">SENSITIVE</span></td><td class="fobj">pricebook</td></tr>
+        <tr><td class="fname">services[] → duration_estimate</td><td class="fdesc">Typical job length — helps the AI have a credible scheduling conversation</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">pricebook</td></tr>
+        <tr><td class="fname">services_not_offered[]</td><td class="fdesc">Explicit exclusions — things callers often ask for that this Pro doesn't do. Critical to avoid bad bookings.</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">pricebook</td></tr>
+        <tr><td class="fname">emergency_service_available</td><td class="fdesc">Does this Pro take emergency / after-hours calls? Boolean + any surcharge note.</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">pricebook</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">🕐 Business Hours & Availability</td></tr>
+        <tr><td class="fname">hours_of_operation[]</td><td class="fdesc">Day-by-day hours — Mon–Sun open/close. AI must know if it's currently within business hours.</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">hours</td></tr>
+        <tr><td class="fname">timezone</td><td class="fdesc">Pro's local timezone — required to interpret hours correctly</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">hours</td></tr>
+        <tr><td class="fname">after_hours_handling</td><td class="fdesc">What happens outside business hours — take a message, book anyway, transfer to on-call, forward to owner</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">hours</td></tr>
+        <tr><td class="fname">holiday_closures[]</td><td class="fdesc">Specific dates they're closed — AI should not offer slots on these days</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">hours</td></tr>
+        <tr><td class="fname">booking_lead_time_hours</td><td class="fdesc">Minimum notice required before an appointment — AI shouldn't book same-hour slots if Pro needs 24hr notice</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">hours</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">📅 Calendar & Scheduling</td></tr>
+        <tr><td class="fname">available_slots[] → date, time_window, technician</td><td class="fdesc">Open booking windows — the AI's primary scheduling input. Must be current at session start.</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">calendar</td></tr>
+        <tr><td class="fname">booking_window_days</td><td class="fdesc">How far out the AI can book — e.g., next 14 days only</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">calendar</td></tr>
+        <tr><td class="fname">arrival_window_type</td><td class="fdesc">How windows are presented to customers — "2-hour window", "morning/afternoon", exact time</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">calendar</td></tr>
+        <tr><td class="fname">double_booking_allowed</td><td class="fdesc">Whether multiple jobs can be scheduled in the same window — important for multi-tech shops</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">calendar</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">👷 Team</td></tr>
+        <tr><td class="fname">employees[] → name, role</td><td class="fdesc">Technician names and roles — customers say "can I get Mike again?" AI needs to know who Mike is</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">team</td></tr>
+        <tr><td class="fname">employees[] → active</td><td class="fdesc">Whether the employee is currently active — avoid mentioning departed staff</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">team</td></tr>
+        <tr><td class="fname">owner_name</td><td class="fdesc">"Can I speak to the owner?" is common — AI should know their name</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">team</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">📲 Online Booking (OLB)</td></tr>
+        <tr><td class="fname">olb_enabled</td><td class="fdesc">Whether OLB is active for this Pro — determines if AI can send a self-serve booking link</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">olb</td></tr>
+        <tr><td class="fname">olb_url</td><td class="fdesc">The direct booking link — AI can offer this as an alternative to phone booking</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">olb</td></tr>
+        <tr><td class="fname">olb_services_enabled[]</td><td class="fdesc">Which services are bookable online — not all Pros enable all services for self-serve</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">olb</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">⚙️ HCP AI Configuration</td></tr>
+        <tr><td class="fname">custom_greeting</td><td class="fdesc">Pro-configured opening line — if set, AI uses this verbatim instead of default greeting</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">ai_config</td></tr>
+        <tr><td class="fname">escalation_phone_number</td><td class="fdesc">Where to transfer when caller asks for a human or AI can't handle — must always be available</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">ai_config</td></tr>
+        <tr><td class="fname">escalation_triggers[]</td><td class="fdesc">Specific phrases or scenarios that should always trigger a transfer — "speak to a person", "emergency", custom Pro-defined keywords</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">ai_config</td></tr>
+        <tr><td class="fname">sms_notifications_enabled</td><td class="fdesc">Whether AI can send SMS confirmations after booking — some Pros have this off</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">ai_config</td></tr>
+        <tr><td class="fname">call_recording_consent_language</td><td class="fdesc">State-specific disclosure required at call start — AI must read this if configured</td><td><span class="badge badge-sensitive">SENSITIVE</span></td><td class="fobj">ai_config</td></tr>
+        <tr><td class="fname">languages_supported[]</td><td class="fdesc">If Pro supports Spanish or other languages — AI should handle or transfer accordingly</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">ai_config</td></tr>
+        <tr><td class="fname">custom_instructions</td><td class="fdesc">Free-text field — Pro can add anything: "always mention our $49 diagnostic fee", "don't quote prices over the phone", "we don't do mobile homes"</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">ai_config</td></tr>
+        <tr><td class="fname">blocked_topics[]</td><td class="fdesc">Topics the AI should never engage with — competitor mentions, disputes, specific jobs</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">ai_config</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">⭐ Reputation</td></tr>
+        <tr><td class="fname">avg_rating, review_count</td><td class="fdesc">Overall star rating and volume — AI can reference "our 4.8-star rated team" with confidence</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">reputation</td></tr>
+        <tr><td class="fname">review_highlights[]</td><td class="fdesc">Top themes from recent reviews — "always on time", "upfront pricing" — gives AI specific, credible trust signals</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">reputation</td></tr>
+        <tr><td class="fname">recent_reviews[] → body, rating, date</td><td class="fdesc">Most recent reviews — AI can surface specific proof points if customer expresses hesitation</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">reputation</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">💳 Payments & Finance</td></tr>
+        <tr><td class="fname">accepted_payment_methods[]</td><td class="fdesc">Cash, card, check, financing, Venmo — customers often ask before booking</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">payments</td></tr>
+        <tr><td class="fname">financing_available</td><td class="fdesc">Whether financing options exist — relevant for large-ticket jobs</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">payments</td></tr>
+        <tr><td class="fname">diagnostic_fee, service_call_fee</td><td class="fdesc">Upfront fee structure — one of the most common caller questions. AI must answer accurately or follow Pro's instruction to not quote.</td><td><span class="badge badge-sensitive">SENSITIVE</span></td><td class="fobj">payments</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OPEN QUESTIONS -->
+  <div class="section">
+    <div class="section-title">❓ Open Questions for Engineering</div>
+    <ul class="q-list">
+      <li><span class="q-num">1</span>What's the realistic latency to assemble the full Pro context payload at session start? Which fields require joins vs. are cached? Target: assembled before first AI utterance.</li>
+      <li><span class="q-num">2</span>How stale can Pro context be? Business hours and services change infrequently — cache is probably fine. Calendar availability changes minute-to-minute — needs to be live or near-live. Engineering to define TTL per object type.</li>
+      <li><span class="q-num">3</span>Available slots: do we inject the next N slots into the system prompt, or does the AI query availability dynamically? Full pre-load vs. tool call for scheduling is a key architectural decision.</li>
+      <li><span class="q-num">4</span>Pricebook can be very large for some Pros (hundreds of line items). What's the right truncation strategy — top N services by booking frequency? Services matching detected caller intent?</li>
+      <li><span class="q-num">5</span>Custom instructions is a free-text field. Do we inject it verbatim, or does it get parsed/validated before it reaches the AI? Risk of prompt injection from Pro-entered content.</li>
+      <li><span class="q-num">6</span>How does Pro context interact with Customer context when both are loaded? Define injection order and any field collision rules (e.g., Pro says "don't quote prices" but customer_id lookup has past invoice amounts).</li>
+    </ul>
+  </div>
+
+  <!-- NEXT STEPS -->
+  <div class="section" style="background:#f0fdf4;border:1px solid #bbf7d0;">
+    <div class="section-title" style="color:#065f46;border-color:#bbf7d0;">✅ Next Steps</div>
+    <ul class="q-list">
+      <li><span class="q-num" style="color:#059669;">1</span><strong>Montrell + Eng:</strong> Assess each field — available now / needs work / not feasible. Flag latency and caching concerns per object type.</li>
+      <li><span class="q-num" style="color:#059669;">2</span><strong>Eng:</strong> Define the calendar availability injection strategy — pre-loaded slots vs. live tool call. This is the highest-stakes decision for eliminating dead air.</li>
+      <li><span class="q-num" style="color:#059669;">3</span><strong>Chris + Garrett:</strong> Agree on v1 scope — minimum Pro context that eliminates the most common mid-call tool calls. Instrument before and after to measure dead air reduction.</li>
+      <li><span class="q-num" style="color:#059669;">4</span><strong>Garrett:</strong> Audit current Vapi system prompt — identify every field currently fetched via tool call mid-conversation that could move to pre-loaded Pro context.</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;padding:20px 0 8px;font-size:11px;color:#94a3b8;">
+    HCP AI · Pro Context Service · Chris Kosednar → Montrell Williams · 2026-03-17
+  </div>
+
+</div>
+</body>
+</html>

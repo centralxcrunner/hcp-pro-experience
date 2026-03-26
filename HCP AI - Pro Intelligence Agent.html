@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCP AI — Pro Intelligence Agent</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f5f7; color: #1a1a2e; font-size: 14px; }
+
+  .header { background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 100%); color: white; padding: 32px 48px 28px; }
+  .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .header .meta { color: #a78bfa; font-size: 12px; }
+
+  .container { max-width: 1000px; margin: 0 auto; padding: 28px 24px; }
+
+  .section { background: white; border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+  .section-title { font-size: 14px; font-weight: 700; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
+
+  /* Flow */
+  .flow { display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap; }
+  .flow-step { text-align: center; position: relative; flex-shrink: 0; }
+  .box { border-radius: 8px; padding: 10px 12px; font-size: 12px; line-height: 1.4; border: 1px solid #e2e8f0; background: #f8fafc; }
+  .box.trigger { background: #2d1b4e; color: white; border-color: #2d1b4e; min-width: 120px; }
+  .box.process { background: #faf5ff; border-color: #d8b4fe; color: #6b21a8; min-width: 140px; }
+  .box.output { background: #f5f3ff; border-color: #c4b5fd; color: #4c1d95; min-width: 150px; font-weight: 600; }
+  .step-label { font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+  .arrow { padding: 0 10px; color: #94a3b8; font-size: 16px; line-height: 1; flex-shrink: 0; margin-top: 18px; }
+
+  /* Insight cards */
+  .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 4px; }
+  .insight-card { border-radius: 8px; padding: 14px 16px; border: 1px solid #e9d5ff; background: #faf5ff; }
+  .insight-card .ic-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: #7e22ce; margin-bottom: 6px; }
+  .insight-card .ic-title { font-size: 13px; font-weight: 700; color: #1e1b4b; margin-bottom: 5px; }
+  .insight-card .ic-body { font-size: 12px; color: #475569; line-height: 1.5; }
+  .insight-card .ic-example { font-size: 11px; color: #7c3aed; background: #ede9fe; border-radius: 4px; padding: 6px 10px; margin-top: 8px; font-style: italic; line-height: 1.5; }
+
+  /* vs comparison */
+  .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; }
+  .vs-col { padding: 16px 20px; }
+  .vs-col.old { background: #f8fafc; }
+  .vs-col.new { background: #f5f3ff; }
+  .vs-col h4 { font-size: 12px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .07em; }
+  .vs-col.old h4 { color: #94a3b8; }
+  .vs-col.new h4 { color: #7e22ce; }
+  .vs-col ul { list-style: none; }
+  .vs-col ul li { font-size: 12px; padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,.05); color: #475569; display: flex; gap: 8px; line-height: 1.4; }
+  .vs-col ul li:last-child { border-bottom: none; }
+  .vs-col ul li::before { flex-shrink: 0; }
+  .vs-col.old ul li::before { content: "✗"; color: #cbd5e1; }
+  .vs-col.new ul li::before { content: "✓"; color: #7e22ce; }
+
+  /* Field table */
+  .field-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .field-table th { background: #f8fafc; text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  .field-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  .field-table tr:last-child td { border-bottom: none; }
+  .field-table .fname { font-weight: 600; color: #1e293b; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
+  .field-table .fdesc { color: #475569; line-height: 1.4; }
+  .field-table .fobj { color: #7e22ce; font-size: 10px; font-weight: 700; }
+  .badge { display: inline-block; padding: 1px 7px; border-radius: 99px; font-size: 10px; font-weight: 700; }
+  .badge-p1 { background: #dbeafe; color: #1d4ed8; }
+  .badge-eng { background: #fef3c7; color: #d97706; }
+  .badge-agent { background: #ede9fe; color: #6d28d9; }
+  .obj-divider { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: #94a3b8; padding: 12px 12px 4px; background: #f8fafc; border-bottom: 1px solid #f1f5f9; }
+
+  /* Q list */
+  .q-list { list-style: none; }
+  .q-list li { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px; color: #374151; line-height: 1.5; }
+  .q-list li:last-child { border-bottom: none; }
+  .q-num { font-weight: 700; color: #7e22ce; flex-shrink: 0; width: 18px; }
+
+  .note { background: #fefce8; border-left: 3px solid #fbbf24; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12px; color: #78350f; line-height: 1.5; margin-top: 14px; }
+  .note-purple { background: #faf5ff; border-left: 3px solid #a78bfa; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12px; color: #4c1d95; line-height: 1.5; margin-top: 14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>HCP AI — Pro Intelligence Agent</h1>
+  <div class="meta">Engineering Requirement · Chris Kosednar → Montrell Williams · 2026-03-17</div>
+  <div style="color:#ddd6fe;font-size:13px;margin-top:10px;line-height:1.6;max-width:820px;">
+    A daily batch agent that reads a Pro's last 180 days of completed jobs — titles, descriptions, line items, and technician notes — and distills them into a structured intelligence profile. This is the richest possible signal for what a Pro actually does. Settings tell you what they configured. Job history tells you what they've built a business doing.
+  </div>
+  <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+    <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 14px;font-size:12px;color:#e2e8f0;">🕐 <strong>Runs:</strong> Once per day per active Pro</div>
+    <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 14px;font-size:12px;color:#e2e8f0;">📥 <strong>Input:</strong> 180 days of completed jobs</div>
+    <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 14px;font-size:12px;color:#e2e8f0;">📤 <strong>Output:</strong> Pro Intelligence Profile written to context store</div>
+    <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 14px;font-size:12px;color:#e2e8f0;">🔌 <strong>Consumed by:</strong> Pro Context Service at session start</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- WHY THIS BEATS SETTINGS -->
+  <div class="section">
+    <div class="section-title">🧠 Why Job History Beats Settings</div>
+
+    <div class="vs-grid">
+      <div class="vs-col old">
+        <h4>Settings + Pricebook</h4>
+        <ul>
+          <li>Configured once and forgotten — often out of date</li>
+          <li>Lists services a Pro added to the catalog, not what they actually get called for</li>
+          <li>Prices often not filled in or set to generic defaults</li>
+          <li>Tells you nothing about how jobs actually go — what gets noted, what goes wrong</li>
+          <li>No signal on what the Pro is good at vs. what's a stretch job</li>
+          <li>No seasonal or geographic pattern — uniform flat list</li>
+        </ul>
+      </div>
+      <div class="vs-col new">
+        <h4>180 Days of Job History</h4>
+        <ul>
+          <li>Reflects what the Pro actually does — frequency is truth</li>
+          <li>Real job descriptions written by techs in the field — natural language, specific</li>
+          <li>Actual completed invoice amounts — what customers really pay</li>
+          <li>Tech notes reveal common issues, access instructions, customer context</li>
+          <li>Job volume and type by month — reveals seasonality and core vs. edge work</li>
+          <li>Geographic coverage from actual job addresses — not configured radius</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-purple">
+      <strong>The core insight:</strong> A Pro who's done 200 HVAC tune-ups in the last 6 months is an HVAC business, even if their pricebook has 40 other service categories. The AI should talk like it knows that. Right now it doesn't.
+    </div>
+  </div>
+
+  <!-- HOW THE AGENT WORKS -->
+  <div class="section">
+    <div class="section-title">⚡ Agent Flow — Daily Batch</div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-label">Trigger</div>
+        <div class="box trigger">🕐 Daily cron<br>per active Pro<br>(off-peak hours)</div>
+      </div>
+      <div><div class="arrow">→</div></div>
+      <div class="flow-step">
+        <div class="step-label">Fetch</div>
+        <div class="box process">Pull all jobs<br>last 180 days<br>for this org</div>
+      </div>
+      <div><div class="arrow">→</div></div>
+      <div class="flow-step">
+        <div class="step-label">Process</div>
+        <div class="box process">LLM distills<br>job data into<br>structured profile</div>
+      </div>
+      <div><div class="arrow">→</div></div>
+      <div class="flow-step">
+        <div class="step-label">Write</div>
+        <div class="box output">Pro Intelligence<br>Profile saved to<br>context store</div>
+      </div>
+      <div><div class="arrow">→</div></div>
+      <div class="flow-step">
+        <div class="step-label">Consumed</div>
+        <div class="box process">Injected at<br>session start by<br>Pro Context Service</div>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:20px;">
+      <strong>Separation of concerns:</strong> This agent runs offline, once per day. It is not in the call path — the profile it generates is pre-written to a store and fetched at session start like any other Pro context field. Zero latency impact on live interactions.
+    </div>
+  </div>
+
+  <!-- WHAT THE AGENT PRODUCES -->
+  <div class="section">
+    <div class="section-title">📋 What the Agent Produces — Intelligence Profile Fields</div>
+
+    <p style="font-size:12px;color:#64748b;margin-bottom:18px;">The agent reads raw job data and writes a structured profile. Fields marked <span class="badge badge-agent">AGENT</span> are LLM-generated summaries. Fields marked <span class="badge badge-p1">P1</span> are direct aggregations from job records.</p>
+
+    <table class="field-table">
+      <thead>
+        <tr>
+          <th style="width:210px;">Field</th>
+          <th>Description / What It Enables</th>
+          <th style="width:80px;">Type</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td colspan="3" class="obj-divider">📊 Service Patterns — What They Actually Do</td></tr>
+        <tr>
+          <td class="fname">top_services[]<br><span style="font-size:10px;color:#94a3b8;">→ name, job_count, pct_of_volume</span></td>
+          <td class="fdesc">Top service types ranked by job count over 180 days. The AI's primary signal for what this Pro does. "You've called the right place — AC repair is our most common job." AI should lead with confidence on high-volume services.</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+        <tr>
+          <td class="fname">services_not_in_top_10[]</td>
+          <td class="fdesc">Services that appear rarely (&lt;2% of volume) — these are edge jobs. AI should express appropriate uncertainty or escalate to a human rather than over-committing on low-volume work.</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+        <tr>
+          <td class="fname">typical_job_description_samples[]</td>
+          <td class="fdesc">Verbatim job title + description samples from the last 90 days, one per top service type. Gives the AI the Pro's actual language for their work — how their technicians describe jobs. Informs natural, specific conversation.</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+        <tr>
+          <td class="fname">seasonal_pattern</td>
+          <td class="fdesc">LLM summary of volume and service mix by month. "This Pro sees 3x HVAC volume June–August, slower in Jan–Feb." Helps AI set accurate expectations on availability and lead time.</td>
+          <td><span class="badge badge-agent">AGENT</span></td>
+        </tr>
+        <tr>
+          <td class="fname">emergency_job_rate</td>
+          <td class="fdesc">% of jobs flagged as emergency or same-day. High rate = Pro is comfortable with urgency; low rate = they likely don't prioritize emergency calls. AI should calibrate its urgency language accordingly.</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+
+        <tr><td colspan="3" class="obj-divider">📍 Geographic Coverage — Where They Actually Work</td></tr>
+        <tr>
+          <td class="fname">active_zip_codes[]<br><span style="font-size:10px;color:#94a3b8;">→ zip, job_count</span></td>
+          <td class="fdesc">Zip codes where jobs were actually completed, ranked by volume. Ground truth service area — more reliable than configured radius. AI can confidently confirm coverage for high-volume zips.</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+        <tr>
+          <td class="fname">active_cities[]</td>
+          <td class="fdesc">Cities derived from job addresses, ranked by frequency. AI can say "we work all over [City A] and [City B]" based on real data.</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+        <tr>
+          <td class="fname">farthest_job_distance_miles</td>
+          <td class="fdesc">Maximum distance from business address where a job was completed — real upper bound on how far they've traveled.</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+
+        <tr><td colspan="3" class="obj-divider">💰 Pricing — What Customers Actually Pay</td></tr>
+        <tr>
+          <td class="fname">price_ranges[]<br><span style="font-size:10px;color:#94a3b8;">→ service_type, p25, median, p75</span></td>
+          <td class="fdesc">Actual invoice amounts from completed jobs, by service type. 25th/50th/75th percentile. Far more accurate than pricebook entries. Engineering to determine whether AI may quote ranges or only acknowledge "we'll provide a firm quote on-site."</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+        <tr>
+          <td class="fname">avg_job_value, median_job_value</td>
+          <td class="fdesc">Overall job economics — AI uses this to calibrate whether a caller's ask is typical or a larger-than-usual engagement.</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+        <tr>
+          <td class="fname">common_add_ons[]</td>
+          <td class="fdesc">Line items that frequently appear alongside primary services. Signals natural upsell opportunities. "When we do AC tune-ups we usually check refrigerant levels — want me to include that?"</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+
+        <tr><td colspan="3" class="obj-divider">📝 Technician Notes — The Richest Signal</td></tr>
+        <tr>
+          <td class="fname">common_note_themes[]</td>
+          <td class="fdesc">LLM-extracted recurring themes from tech notes across 180 days — e.g., "gate code required at most commercial jobs", "customers frequently ask about warranty on parts", "dogs present at residential calls". These are patterns the AI couldn't know from settings.</td>
+          <td><span class="badge badge-agent">AGENT</span></td>
+        </tr>
+        <tr>
+          <td class="fname">common_access_instructions</td>
+          <td class="fdesc">LLM summary of recurring access notes — gate codes, parking, building entry. Helps AI set correct expectations with new customers ("our tech will call ahead for any access details").</td>
+          <td><span class="badge badge-agent">AGENT</span></td>
+        </tr>
+        <tr>
+          <td class="fname">frequent_customer_concerns[]</td>
+          <td class="fdesc">Recurring topics noted by techs after jobs — pricing questions, warranty questions, follow-up requests. Trains the AI on what this Pro's customers actually care about.</td>
+          <td><span class="badge badge-agent">AGENT</span></td>
+        </tr>
+        <tr>
+          <td class="fname">quality_signals</td>
+          <td class="fdesc">LLM summary of positive indicators from job notes and outcomes — repeat customers, referrals mentioned, 5-star reviews noted inline. The AI can draw on these as credibility signals without making things up.</td>
+          <td><span class="badge badge-agent">AGENT</span></td>
+        </tr>
+
+        <tr><td colspan="3" class="obj-divider">👷 Team Performance</td></tr>
+        <tr>
+          <td class="fname">technicians_by_volume[]<br><span style="font-size:10px;color:#94a3b8;">→ name, job_count, top_service_type</span></td>
+          <td class="fdesc">Which technicians are doing the most work and in which service categories. "Can I get the same tech who came last time?" — AI can speak to technician specializations with confidence.</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+        <tr>
+          <td class="fname">avg_jobs_per_day</td>
+          <td class="fdesc">Typical daily job volume — gives the AI a realistic sense of how busy this Pro is when discussing availability.</td>
+          <td><span class="badge badge-p1">P1</span></td>
+        </tr>
+
+        <tr><td colspan="3" class="obj-divider">📣 Pro Narrative — Ready to Inject</td></tr>
+        <tr>
+          <td class="fname">pro_summary_paragraph</td>
+          <td class="fdesc">A 3–4 sentence LLM-generated summary of this Pro's business, written in the AI's voice — based entirely on job history. Injected directly into the system prompt. Example: "This is a high-volume HVAC company primarily serving the Denver metro area. Their most common jobs are AC tune-ups, furnace repairs, and refrigerant recharges. They run 8–12 jobs per day across a team of 4 technicians, with a strong track record of same-day availability for emergencies."</td>
+          <td><span class="badge badge-agent">AGENT</span></td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <div class="note-purple" style="margin-top:16px;">
+      <strong>On LLM-generated fields:</strong> The agent uses an LLM to distill patterns from raw job text — not to answer caller questions. The output is structured data written to the context store once per day, reviewed by quality checks before injection. The LLM in the call path only reads the pre-generated profile — it never calls back to raw job data in real time.
+    </div>
+  </div>
+
+  <!-- WHAT GOES INTO THE AGENT -->
+  <div class="section">
+    <div class="section-title">📥 Input — Raw Job Fields the Agent Reads</div>
+    <p style="font-size:12px;color:#64748b;margin-bottom:16px;">The agent reads these fields from the jobs table. No other data sources required for v1.</p>
+    <table class="field-table">
+      <thead>
+        <tr>
+          <th style="width:210px;">Source Field</th>
+          <th>Used For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="fname">job_title, job_description</td><td class="fdesc">Service type classification, typical description samples, narrative generation</td></tr>
+        <tr><td class="fname">line_items[] → name, quantity, unit_price</td><td class="fdesc">Price range calculation, common add-on detection</td></tr>
+        <tr><td class="fname">invoice_total</td><td class="fdesc">Median/percentile pricing by service type, avg job value</td></tr>
+        <tr><td class="fname">service_address → city, zip</td><td class="fdesc">Geographic coverage, active zip codes, farthest job distance</td></tr>
+        <tr><td class="fname">completed_at</td><td class="fdesc">180-day window filter, seasonal pattern analysis</td></tr>
+        <tr><td class="fname">job_type (emergency / standard / estimate)</td><td class="fdesc">Emergency rate calculation</td></tr>
+        <tr><td class="fname">assigned_employees[]</td><td class="fdesc">Technician volume and specialization</td></tr>
+        <tr><td class="fname">internal_notes, tech_notes</td><td class="fdesc">Common note themes, access instructions, frequent customer concerns, quality signals</td></tr>
+        <tr><td class="fname">status = completed</td><td class="fdesc">Filter — only completed jobs count. Cancelled and no-shows excluded.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OPEN QUESTIONS -->
+  <div class="section">
+    <div class="section-title">❓ Open Questions for Engineering</div>
+    <ul class="q-list">
+      <li><span class="q-num">1</span>How many active Pros have 180 days of job history? What's the distribution of job volume — are there Pros with 5 jobs and Pros with 2,000 in that window? Agent behavior needs to gracefully handle both extremes.</li>
+      <li><span class="q-num">2</span>What's the right LLM for the distillation step — cost vs. quality tradeoff at scale across all Pros daily. Engineering to size the per-Pro token budget and total daily cost.</li>
+      <li><span class="q-num">3</span>Tech notes are free-text and sometimes contain PII (customer names, addresses, phone numbers written inline). Agent must strip or mask PII before injecting into the AI-readable profile.</li>
+      <li><span class="q-num">4</span>How do we handle Pros who've had HCP AI enabled for less than 180 days? Shorter windows are fine — agent should note the data range so the AI doesn't over-claim ("based on your last 60 days of jobs...").</li>
+      <li><span class="q-num">5</span>Quality gate: what happens if the agent produces a clearly bad profile — e.g., a Pro with 3 jobs, all in a different trade than their current focus? Flag for review rather than injecting bad signal.</li>
+      <li><span class="q-num">6</span>Where does the profile live in the context store and how does the Pro Context Service fetch it? Define the interface between this agent's output and the session-start injection pipeline.</li>
+    </ul>
+  </div>
+
+  <!-- NEXT STEPS -->
+  <div class="section" style="background:#faf5ff;border:1px solid #d8b4fe;">
+    <div class="section-title" style="color:#4c1d95;border-color:#d8b4fe;">✅ Next Steps</div>
+    <ul class="q-list">
+      <li><span class="q-num" style="color:#7e22ce;">1</span><strong>Eng:</strong> Assess job data availability — confirm jobs table has notes, line items, and address fields accessible for this query at scale. Estimate row volume for a 180-day window across active Pros.</li>
+      <li><span class="q-num" style="color:#7e22ce;">2</span><strong>Eng + Chris:</strong> Prototype the distillation prompt on 5–10 real Pros. Validate that the LLM output (especially <code style="background:#ede9fe;padding:1px 5px;border-radius:3px;">pro_summary_paragraph</code> and <code style="background:#ede9fe;padding:1px 5px;border-radius:3px;">common_note_themes</code>) is accurate and useful before building the pipeline.</li>
+      <li><span class="q-num" style="color:#7e22ce;">3</span><strong>Garrett:</strong> Identify 3 real Pros whose HCP AI calls sound generic today. Run the prototype against their job history and compare the generated profile to what the current system prompt knows. That delta is the value of this agent.</li>
+      <li><span class="q-num" style="color:#7e22ce;">4</span><strong>Chris + Montrell:</strong> Define where this fits in the build sequence relative to the real-time Pro Context Service. These can be built in parallel — same interface, different freshness.</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;padding:20px 0 8px;font-size:11px;color:#94a3b8;">
+    HCP AI · Pro Intelligence Agent · Chris Kosednar → Montrell Williams · 2026-03-17
+  </div>
+
+</div>
+</body>
+</html>

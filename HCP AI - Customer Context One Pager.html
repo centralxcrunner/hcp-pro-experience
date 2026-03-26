@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCP AI — Customer Context Service</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f5f7; color: #1a1a2e; font-size: 14px; }
+
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 32px 48px 28px; }
+  .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .header .meta { color: #94a3b8; font-size: 12px; }
+  .header .summary { color: #cbd5e1; font-size: 13px; margin-top: 10px; line-height: 1.6; max-width: 820px; }
+
+  .container { max-width: 1000px; margin: 0 auto; padding: 28px 24px; }
+
+  .section { background: white; border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+  .section-title { font-size: 14px; font-weight: 700; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
+
+  /* Flow diagram */
+  .flow { display: flex; align-items: center; gap: 0; margin-bottom: 0; }
+  .flow-step { text-align: center; position: relative; flex-shrink: 0; }
+  .box { border-radius: 8px; padding: 10px 12px; font-size: 12px; line-height: 1.4; border: 1px solid #e2e8f0; background: #f8fafc; }
+  .box.trigger { background: #1e3a5f; color: white; border-color: #1e3a5f; min-width: 110px; }
+  .box.found { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; min-width: 130px; }
+  .box.notfound { background: #f1f5f9; border-color: #cbd5e1; color: #475569; min-width: 130px; }
+  .box.tool { background: #fdf4ff; border-color: #e9d5ff; color: #7e22ce; min-width: 150px; }
+  .step-label { font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+  .arrow { padding: 0 10px; color: #94a3b8; font-size: 16px; line-height: 1; flex-shrink: 0; margin-top: 18px; }
+  .arrow-label { font-size: 10px; color: #94a3b8; text-align: center; margin-top: 3px; }
+
+  /* Two-path layout */
+  .path-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+  .path { border-radius: 8px; padding: 16px; }
+  .path.path-a { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .path.path-b { background: #fdf4ff; border: 1px solid #e9d5ff; }
+  .path-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .path-a .path-label { color: #2563eb; }
+  .path-b .path-label { color: #7e22ce; }
+  .path h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .path p { font-size: 12px; color: #475569; line-height: 1.5; }
+
+  /* Tool call spec */
+  .tool-spec { background: #0f172a; border-radius: 10px; padding: 20px 24px; color: #e2e8f0; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; line-height: 1.7; }
+  .tool-spec .comment { color: #64748b; }
+  .tool-spec .key { color: #93c5fd; }
+  .tool-spec .val { color: #86efac; }
+  .tool-spec .type { color: #fde68a; }
+  .tool-spec .fn { color: #c4b5fd; font-weight: 700; }
+  .tool-spec .section-break { color: #475569; margin: 10px 0 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* Field table */
+  .field-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .field-table th { background: #f8fafc; text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  .field-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  .field-table tr:last-child td { border-bottom: none; }
+  .field-table .fname { font-weight: 600; color: #1e293b; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
+  .field-table .fdesc { color: #475569; line-height: 1.4; }
+  .field-table .fobj { color: #7e22ce; font-size: 10px; font-weight: 700; }
+  .badge { display: inline-block; padding: 1px 7px; border-radius: 99px; font-size: 10px; font-weight: 700; }
+  .badge-p1 { background: #dbeafe; color: #1d4ed8; }
+  .badge-eng { background: #fef3c7; color: #d97706; }
+  .badge-sensitive { background: #fee2e2; color: #dc2626; }
+
+  .obj-divider { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: #94a3b8; padding: 12px 12px 4px; background: #f8fafc; border-bottom: 1px solid #f1f5f9; }
+
+  /* Q list */
+  .q-list { list-style: none; }
+  .q-list li { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px; color: #374151; line-height: 1.5; }
+  .q-list li:last-child { border-bottom: none; }
+  .q-num { font-weight: 700; color: #6366f1; flex-shrink: 0; width: 18px; }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #475569; }
+
+  .note { background: #fefce8; border-left: 3px solid #fbbf24; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12px; color: #78350f; line-height: 1.5; margin-top: 14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>HCP AI — Customer Context Service</h1>
+  <div class="meta">Engineering Requirement · Chris Kosednar → Montrell Williams · 2026-03-17</div>
+  <div class="summary">
+    A shared backend service that enriches any HCP AI interaction with full customer history the moment a caller or texter is identified. Build it once — every channel consumes it.
+  </div>
+  <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+    <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 14px;font-size:12px;color:#e2e8f0;">📞 <strong>Voice (HCP AI)</strong> — inbound calls today</div>
+    <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 14px;font-size:12px;color:#e2e8f0;">💬 <strong>SMS (HCP AI)</strong> — inbound texts, coming soon</div>
+    <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 14px;font-size:12px;color:#94a3b8;">⚡ <strong>Future channels</strong> — any interaction needing customer history</div>
+  </div>
+  <div style="margin-top:14px;font-size:12px;color:#94a3b8;line-height:1.6;max-width:820px;">
+    Two resolution mechanisms: (1) Automatic lookup at interaction start using phone number — context is ready before the AI says a word. (2) A <code style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px;">get_customer_context(customer_id)</code> tool call the AI can invoke mid-conversation once identity is established through dialogue. Together these handle the happy path and the edge case — a household member on a different number, a texter who hasn't interacted before.
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- MECHANISM 1: CALL START LOOKUP -->
+  <div class="section">
+    <div class="section-title">⚡ Mechanism 1 — Automatic Lookup at Call Connect</div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-label">Inbound call</div>
+        <div class="box trigger">📱 Phone number<br>received (ANI)</div>
+      </div>
+      <div>
+        <div class="arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="step-label">Lookup</div>
+        <div class="box">Match phone<br>against HCP<br>customer records</div>
+      </div>
+      <div>
+        <div class="arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="step-label">Match found</div>
+        <div class="box found"><strong>Customer found</strong><br>Inject context into<br>system prompt</div>
+      </div>
+      <div style="padding: 0 6px; color: #e2e8f0; font-size: 22px; line-height: 1; margin-top: 18px;">·</div>
+      <div class="flow-step">
+        <div class="step-label">No match</div>
+        <div class="box notfound"><strong>Unknown caller</strong><br>Proceed without<br>customer context</div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Timing requirement:</strong> Lookup must complete before the AI's opening line. Engineering to define realistic latency ceiling and what fields are fast vs. require joins. If lookup can't complete in time, AI opens generically and context is injected as soon as it's ready.
+    </div>
+  </div>
+
+  <!-- MECHANISM 2: TOOL CALL -->
+  <div class="section">
+    <div class="section-title">🔧 Mechanism 2 — Tool Call: <code style="background:#f1f5f9;padding:2px 8px;border-radius:4px;font-size:13px;">get_customer_context(customer_id)</code></div>
+
+    <p style="font-size:12px;color:#475569;margin-bottom:16px;line-height:1.6;">When the phone number lookup returns no match, the AI starts the call without customer context. But during the conversation, the caller may reveal they're an existing customer — e.g., a spouse calling from their own phone who references a job, an appointment, or gives an address on file. When the AI determines a <strong>customer_id</strong> through conversation, it calls this tool to retrieve and inject full context at that point.</p>
+
+    <div class="tool-spec">
+<span class="comment">// Tool definition for HCP AI (Vapi tool call format)</span>
+
+<span class="section-break">— Tool Name & Description —</span>
+<span class="key">name:</span>        <span class="val">"get_customer_context"</span>
+<span class="key">description:</span> <span class="val">"Retrieve full customer context from HCP using a known customer_id.</span>
+<span class="val">             Call this when the caller's identity has been established through</span>
+<span class="val">             conversation (e.g. spouse on different phone, customer provides name</span>
+<span class="val">             + address that matches an existing record). Injects customer history,</span>
+<span class="val">             open jobs, upcoming appointments, and recent transcripts into context."</span>
+
+<span class="section-break">— Input Parameter —</span>
+<span class="key">parameters:</span>
+  <span class="key">customer_id:</span>
+    <span class="key">type:</span>        <span class="type">string</span>
+    <span class="key">required:</span>    <span class="val">true</span>
+    <span class="key">description:</span> <span class="val">"HCP customer UUID. AI should only call this tool once it has</span>
+<span class="val">                 confirmed the identity through conversation — not speculatively."</span>
+
+<span class="section-break">— Response Payload (engineering to define exact schema) —</span>
+<span class="key">returns:</span>
+  <span class="key">customer:</span>        <span class="comment">// name, addresses, phones, tags, notes</span>
+  <span class="key">jobs:</span>            <span class="comment">// all jobs, most recent first — status, type, dates, appointments</span>
+  <span class="key">estimates:</span>       <span class="comment">// open/sent estimates — title, status, expiry</span>
+  <span class="key">call_transcripts:</span> <span class="comment">// prior HCP AI calls — summary + outcome, most recent first</span>
+  <span class="key">sms_threads:</span>     <span class="comment">// recent SMS/chat — open threads, last message</span>
+  <span class="key">recurring_plans:</span> <span class="comment">// active memberships / service plans</span>
+    </div>
+
+    <div class="path-split">
+      <div class="path path-a">
+        <div class="path-label">🔵 When to call this tool</div>
+        <h4>AI has identified the customer through conversation</h4>
+        <p>Caller provides name + address that matches a record, references a specific job or estimate number, or confirms details that uniquely identify them. Customer_id is known with reasonable confidence before the tool is called.</p>
+      </div>
+      <div class="path path-b">
+        <div class="path-label">🟣 When NOT to call this tool</div>
+        <h4>Speculative or low-confidence identity</h4>
+        <p>Do not call based on name alone (common names), or if the caller hasn't confirmed enough details to establish identity. False positives risk injecting the wrong customer's data into the call.</p>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:16px;">
+      <strong>Open question for eng:</strong> How does the AI obtain a customer_id through conversation? Options: (a) AI asks for name + address, backend resolves to customer_id and returns it for the tool call, (b) secondary lookup happens transparently and AI is handed a customer_id to confirm. Engineering to propose the resolution flow.
+    </div>
+  </div>
+
+  <!-- DATA PAYLOAD -->
+  <div class="section">
+    <div class="section-title">🗂️ Context Payload — Fields to Return</div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="badge badge-p1">P1</span> Include in v1</div>
+      <div class="legend-item"><span class="badge badge-eng">ENG</span> Engineering to assess feasibility / latency</div>
+      <div class="legend-item"><span class="badge badge-sensitive">SENSITIVE</span> Flag — may need masking; do not surface raw value to AI</div>
+    </div>
+
+    <p style="font-size:12px;color:#64748b;margin-bottom:14px;">All records scoped to the <strong>customer ↔ this pro's org</strong> relationship. Engineering to propose context window limits and what gets truncated first if budget is exceeded.</p>
+
+    <table class="field-table">
+      <thead>
+        <tr>
+          <th style="width:180px;">Field</th>
+          <th>Description</th>
+          <th style="width:70px;">Priority</th>
+          <th class="fobj" style="width:100px;">Object</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td colspan="4" class="obj-divider">👤 Customer</td></tr>
+        <tr><td class="fname">customer_id</td><td class="fdesc">Primary key — used as input to get_customer_context</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">customer</td></tr>
+        <tr><td class="fname">first_name, last_name</td><td class="fdesc">Greet by name; skip "who am I speaking with"</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">customer</td></tr>
+        <tr><td class="fname">phone_numbers[]</td><td class="fdesc">All numbers on file — mobile, home, work</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">customer</td></tr>
+        <tr><td class="fname">addresses[]</td><td class="fdesc">All service addresses — skip address collection if known</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">customer</td></tr>
+        <tr><td class="fname">email_addresses[]</td><td class="fdesc">Skip email collection if on file</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">customer</td></tr>
+        <tr><td class="fname">tags[]</td><td class="fdesc">Pro-applied labels: VIP, commercial, do-not-call, etc.</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">customer</td></tr>
+        <tr><td class="fname">notes</td><td class="fdesc">Pro's internal notes — gate code, dog in yard, special instructions</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">customer</td></tr>
+        <tr><td class="fname">opted_out_of_ai</td><td class="fdesc">If true — transfer immediately, do not attempt AI handling</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">customer</td></tr>
+        <tr><td class="fname">created_at</td><td class="fdesc">Customer since — tenure signal</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">customer</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">🔧 Jobs — all for this customer, most recent first</td></tr>
+        <tr><td class="fname">job_id, status</td><td class="fdesc">scheduled / in_progress / complete / cancelled — status is the most important field</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">jobs[]</td></tr>
+        <tr><td class="fname">job_type, description</td><td class="fdesc">What the job was / is for</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">jobs[]</td></tr>
+        <tr><td class="fname">created_at, completed_at</td><td class="fdesc">Recency of service — when did we last work for this customer?</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">jobs[]</td></tr>
+        <tr><td class="fname">appointments[] → scheduled_start, arrival_window, status</td><td class="fdesc">Upcoming / active visits — AI can confirm appointment details without asking</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">jobs[]</td></tr>
+        <tr><td class="fname">service_address</td><td class="fdesc">Where work was performed — may differ from primary address</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">jobs[]</td></tr>
+        <tr><td class="fname">internal_notes</td><td class="fdesc">Tech or office notes added during the job</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">jobs[]</td></tr>
+        <tr><td class="fname">invoice_status</td><td class="fdesc">paid / unpaid / overdue — boolean flag; do not surface raw dollar amount to AI</td><td><span class="badge badge-sensitive">SENSITIVE</span></td><td class="fobj">jobs[]</td></tr>
+        <tr><td class="fname">assigned_employees[]</td><td class="fdesc">Technician name — customer may ask "is Mike coming back?"</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">jobs[]</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">📋 Estimates — all for this customer</td></tr>
+        <tr><td class="fname">estimate_id, status</td><td class="fdesc">draft / sent / viewed / approved / declined / expired — "calling about my quote" is a top reason</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">estimates[]</td></tr>
+        <tr><td class="fname">title, description</td><td class="fdesc">What the estimate was for</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">estimates[]</td></tr>
+        <tr><td class="fname">expires_at</td><td class="fdesc">Is the estimate still valid? Don't discuss expired estimates as active</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">estimates[]</td></tr>
+        <tr><td class="fname">total</td><td class="fdesc">Estimate amount — sensitive; eng to determine if AI may reference</td><td><span class="badge badge-sensitive">SENSITIVE</span></td><td class="fobj">estimates[]</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">📞 Prior HCP AI Call Transcripts</td></tr>
+        <tr><td class="fname">called_at, call_outcome</td><td class="fdesc">When + result: booked / transferred / hung_up / notes_only / booking_error</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">call_transcripts[]</td></tr>
+        <tr><td class="fname">transcript_summary</td><td class="fdesc">AI-generated summary of what was discussed — preferred over full transcript for context budget</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">call_transcripts[]</td></tr>
+        <tr><td class="fname">customer_intent_detected</td><td class="fdesc">What the AI understood as the reason for calling</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">call_transcripts[]</td></tr>
+        <tr><td class="fname">reason_not_booked</td><td class="fdesc">If call didn't result in booking — no availability / declined / error / hung up</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">call_transcripts[]</td></tr>
+        <tr><td class="fname">transcript_full (turn-by-turn)</td><td class="fdesc">Raw exchange — large; eng to assess whether summary is sufficient or if full text is needed</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">call_transcripts[]</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">💬 SMS / Chat Threads</td></tr>
+        <tr><td class="fname">thread_status</td><td class="fdesc">open / resolved — is there an unanswered SMS right now?</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">sms_threads[]</td></tr>
+        <tr><td class="fname">last_message_at, direction, body</td><td class="fdesc">Most recent message and whether it's inbound (from customer) or outbound</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">sms_threads[]</td></tr>
+        <tr><td class="fname">opted_out_of_sms</td><td class="fdesc">STOP received — compliance flag; do not attempt SMS follow-up</td><td><span class="badge badge-sensitive">SENSITIVE</span></td><td class="fobj">sms_threads[]</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">🔁 Recurring Plans & Memberships</td></tr>
+        <tr><td class="fname">plan_name, status</td><td class="fdesc">active / paused / cancelled — is this customer on a maintenance plan?</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">recurring_plans[]</td></tr>
+        <tr><td class="fname">next_service_date</td><td class="fdesc">When is the next scheduled visit under the plan</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">recurring_plans[]</td></tr>
+        <tr><td class="fname">billing_amount</td><td class="fdesc">Plan billing — sensitive; flag only</td><td><span class="badge badge-sensitive">SENSITIVE</span></td><td class="fobj">recurring_plans[]</td></tr>
+
+        <tr><td colspan="4" class="obj-divider">📣 Marketing Campaigns</td></tr>
+        <tr><td class="fname">campaign_name, type</td><td class="fdesc">Name and channel — SMS, email, postcard. Tells the AI what this customer has already been sent.</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">campaigns[]</td></tr>
+        <tr><td class="fname">sent_at</td><td class="fdesc">When the campaign was delivered to this customer — recency matters</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">campaigns[]</td></tr>
+        <tr><td class="fname">opened, clicked</td><td class="fdesc">Engagement signal — did they open/click before calling? High-intent indicator.</td><td><span class="badge badge-p1">P1</span></td><td class="fobj">campaigns[]</td></tr>
+        <tr><td class="fname">campaign_body_summary</td><td class="fdesc">What the message said — offer, CTA, promo. AI can reference "the deal we sent you" without re-explaining it.</td><td><span class="badge badge-eng">ENG</span></td><td class="fobj">campaigns[]</td></tr>
+        <tr><td class="fname">opted_out_of_marketing</td><td class="fdesc">Unsubscribed from email or SMS marketing — compliance flag; do not re-pitch campaigns</td><td><span class="badge badge-sensitive">SENSITIVE</span></td><td class="fobj">campaigns[]</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OPEN QUESTIONS -->
+  <div class="section">
+    <div class="section-title">❓ Open Questions for Engineering</div>
+    <ul class="q-list">
+      <li><span class="q-num">1</span>What's the realistic latency for phone number lookup + context assembly before the AI's opening line? What fields are fast vs. require joins?</li>
+      <li><span class="q-num">2</span>For <code style="background:#f1f5f9;padding:1px 5px;border-radius:3px;">get_customer_context</code>: how does the AI obtain a valid customer_id through conversation? Does it ask name + address, then the backend resolves to customer_id, then AI calls the tool? Or does a secondary lookup happen transparently first?</li>
+      <li><span class="q-num">3</span>What's our false-positive risk on identity resolution? If a caller says "it's Sarah" and there are 3 customers named Sarah at this pro — how do we disambiguate before the tool call fires?</li>
+      <li><span class="q-num">4</span>What's the context window budget for injected data? What's the priority order if we hit the limit — what gets truncated first?</li>
+      <li><span class="q-num">5</span>Are prior call transcripts stored in summarized form already, or only raw audio/text? What's the pipeline from Deepgram/Vapi → structured summary we can inject?</li>
+      <li><span class="q-num">6</span>Which financial fields (invoice totals, estimate amounts, billing) should never be surfaced as a raw value to the AI? Engineering to define what's read-only or flag-only.</li>
+      <li><span class="q-num">7</span>Multi-record households: phone number matches multiple customers at the same pro (e.g., family business). How do we handle?</li>
+    </ul>
+  </div>
+
+  <!-- NEXT STEPS -->
+  <div class="section" style="background:#f0fdf4;border:1px solid #bbf7d0;">
+    <div class="section-title" style="color:#065f46;border-color:#bbf7d0;">✅ Next Steps</div>
+    <ul class="q-list">
+      <li><span class="q-num" style="color:#059669;">1</span><strong>Montrell + Eng:</strong> Assess each field above — mark available now / needs work / not feasible. Flag latency and sensitivity concerns.</li>
+      <li><span class="q-num" style="color:#059669;">2</span><strong>Montrell:</strong> Define the identity resolution flow for <code style="background:#dcfce7;padding:1px 5px;border-radius:3px;">get_customer_context</code> — how does the AI get from "I think I know who this is" to a confirmed customer_id it can pass to the tool?</li>
+      <li><span class="q-num" style="color:#059669;">3</span><strong>Chris + Garrett:</strong> Agree on v1 scope — minimum context payload that meaningfully changes call behavior. Ship narrow, iterate fast.</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;padding:20px 0 8px;font-size:11px;color:#94a3b8;">
+    HCP AI · Customer Context Service · Chris Kosednar → Montrell Williams · 2026-03-17
+  </div>
+
+</div>
+</body>
+</html>

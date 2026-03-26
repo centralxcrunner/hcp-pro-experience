@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro Website Search Results</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    padding: 2rem;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 2.5rem; }
+  .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .header .subtitle { color: #94a3b8; font-size: 1.1rem; }
+
+  /* Hero stat cards */
+  .hero-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .hero-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    border-top: 4px solid;
+  }
+  .hero-card .number { font-size: 2.5rem; font-weight: 800; }
+  .hero-card .pct { font-size: 1.1rem; font-weight: 600; opacity: 0.85; }
+  .hero-card .label { font-size: 0.85rem; color: #94a3b8; margin-top: 0.25rem; }
+  .hero-card.definite { border-top-color: #10b981; }
+  .hero-card.definite .number, .hero-card.definite .pct { color: #10b981; }
+  .hero-card.likely { border-top-color: #3b82f6; }
+  .hero-card.likely .number, .hero-card.likely .pct { color: #3b82f6; }
+  .hero-card.maybe { border-top-color: #f59e0b; }
+  .hero-card.maybe .number, .hero-card.maybe .pct { color: #f59e0b; }
+  .hero-card.nohit { border-top-color: #ef4444; }
+  .hero-card.nohit .number, .hero-card.nohit .pct { color: #ef4444; }
+
+  /* Headline stat */
+  .headline {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.15rem;
+  }
+  .headline strong { color: #10b981; font-size: 1.3rem; }
+
+  /* Stacked bar */
+  .bar-section { margin-bottom: 2rem; }
+  .bar-section h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem; }
+  .stacked-bar {
+    display: flex;
+    height: 48px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #334155;
+  }
+  .stacked-bar .seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #fff;
+    transition: flex 0.3s;
+  }
+  .stacked-bar .seg.definite { background: #10b981; flex: 40; }
+  .stacked-bar .seg.likely { background: #3b82f6; flex: 12; }
+  .stacked-bar .seg.maybe { background: #f59e0b; flex: 34; color: #1e293b; }
+  .stacked-bar .seg.nohit { background: #ef4444; flex: 14; }
+  .bar-legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+  .bar-legend span::before {
+    content: '';
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+  .bar-legend .l-definite::before { background: #10b981; }
+  .bar-legend .l-likely::before { background: #3b82f6; }
+  .bar-legend .l-maybe::before { background: #f59e0b; }
+  .bar-legend .l-nohit::before { background: #ef4444; }
+
+  /* Extrapolation callout */
+  .callout {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-left: 4px solid #3b82f6;
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .callout h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; color: #3b82f6; margin-bottom: 1rem; }
+  .callout .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .callout .stat { text-align: center; }
+  .callout .stat .num { font-size: 1.6rem; font-weight: 800; }
+  .callout .stat .desc { font-size: 0.8rem; color: #94a3b8; }
+  .callout .stat.definite .num { color: #10b981; }
+  .callout .stat.likely .num { color: #3b82f6; }
+  .callout .stat.maybe .num { color: #f59e0b; }
+  .callout .stat.nohit .num { color: #ef4444; }
+  .callout .punchline {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    text-align: center;
+    font-size: 1rem;
+  }
+  .callout .punchline strong { color: #10b981; }
+
+  /* Classification sections */
+  .section { margin-bottom: 2.5rem; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .section-header h2 { font-size: 1.25rem; font-weight: 700; }
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .badge.definite { background: #10b981; }
+  .badge.likely { background: #3b82f6; }
+  .badge.maybe { background: #f59e0b; color: #1e293b; }
+  .badge.nohit { background: #ef4444; }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1rem;
+  }
+  .card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .card .biz-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.35rem; }
+  .card .meta { font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .card .meta span { background: #0f172a; padding: 0.15rem 0.5rem; border-radius: 4px; }
+  .card .url { margin-bottom: 0.5rem; }
+  .card .url a {
+    color: #38bdf8;
+    text-decoration: none;
+    font-size: 0.85rem;
+    word-break: break-all;
+  }
+  .card .url a:hover { text-decoration: underline; }
+  .card .note { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
+
+  /* Bottom summary */
+  .bottom-summary {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  .bottom-summary p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .bottom-summary .muted { font-size: 0.85rem; color: #64748b; margin-top: 0.75rem; font-weight: 400; }
+
+  @media (max-width: 768px) {
+    body { padding: 1rem; }
+    .hero-row { grid-template-columns: repeat(2, 1fr); }
+    .callout .grid { grid-template-columns: repeat(2, 1fr); }
+    .cards-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Pro Website Search Results</h1>
+    <div class="subtitle">50 "No Website" Pros &mdash; Do They Actually Have One?</div>
+  </div>
+
+  <!-- Headline -->
+  <div class="headline">
+    <strong>52% of "no website" pros actually have websites</strong> they just didn't give to HCP.
+  </div>
+
+  <!-- Hero Stat Cards -->
+  <div class="hero-row">
+    <div class="hero-card definite">
+      <div class="number">20</div>
+      <div class="pct">40%</div>
+      <div class="label">Definite Hit</div>
+    </div>
+    <div class="hero-card likely">
+      <div class="number">6</div>
+      <div class="pct">12%</div>
+      <div class="label">Likely Hit</div>
+    </div>
+    <div class="hero-card maybe">
+      <div class="number">17</div>
+      <div class="pct">34%</div>
+      <div class="label">Maybe</div>
+    </div>
+    <div class="hero-card nohit">
+      <div class="number">7</div>
+      <div class="pct">14%</div>
+      <div class="label">No Hit</div>
+    </div>
+  </div>
+
+  <!-- Stacked Bar -->
+  <div class="bar-section">
+    <h3>Distribution of 50 Sampled Pros</h3>
+    <div class="stacked-bar">
+      <div class="seg definite">40%</div>
+      <div class="seg likely">12%</div>
+      <div class="seg maybe">34%</div>
+      <div class="seg nohit">14%</div>
+    </div>
+    <div class="bar-legend">
+      <span class="l-definite">Definite Hit</span>
+      <span class="l-likely">Likely Hit</span>
+      <span class="l-maybe">Maybe (social/directory only)</span>
+      <span class="l-nohit">No Hit</span>
+    </div>
+  </div>
+
+  <!-- Extrapolation Callout -->
+  <div class="callout">
+    <h2>If representative of all 17,280 "no website" pros...</h2>
+    <div class="grid">
+      <div class="stat definite">
+        <div class="num">~6,912</div>
+        <div class="desc">Have websites HCP<br>doesn't know about</div>
+      </div>
+      <div class="stat likely">
+        <div class="num">~2,074</div>
+        <div class="desc">Probably have<br>websites too</div>
+      </div>
+      <div class="stat maybe">
+        <div class="num">~5,875</div>
+        <div class="desc">Social / directory<br>presence only</div>
+      </div>
+      <div class="stat nohit">
+        <div class="num">~2,419</div>
+        <div class="desc">Truly no web<br>presence at all</div>
+      </div>
+    </div>
+    <div class="punchline">
+      Only <strong>~2,419 pros</strong> (~4% of all 58,710 active pros) truly have no web presence.<br>
+      The "29.4% no website" number is largely a <strong>data capture problem</strong>, not a market reality.
+    </div>
+  </div>
+
+  <!-- Classification Sections -->
+  <div id="sections"></div>
+
+  <!-- Bottom Summary -->
+  <div class="bottom-summary">
+    <p>The "no website" problem is largely a data capture problem, not a market reality.</p>
+    <div class="muted">Prompt pros to add their website during onboarding or in-app. The declining "no website" cohort trend is partly a data gap, not just a market shift.</div>
+  </div>
+
+</div>
+
+<script>
+const data = [{"name":"Hardcastle Home Comfort","classification":"definite_hit","url":"https://hardcastleheat.com/","note":"Professional website at hardcastleheat.com. Carrier dealer, 30 years experience.","city":"Woodland Park, CO","industry":"HVAC","plan":"MAX"},{"name":"Curb Side Plumbing Service","classification":"maybe_hit","url":"","note":"Yelp, Thumbtack, Nextdoor listings only. No website.","city":"Houston, TX","industry":"Plumbing","plan":"Basic"},{"name":"Oasis Air Solutions","classification":"maybe_hit","url":"","note":"Chamber of Commerce listing. Gmail email, no custom domain.","city":"Corpus Christi, TX","industry":"HVAC","plan":"Basic"},{"name":"Affordable Painting & demo","classification":"maybe_hit","url":"","note":"BuildZoom listing only. Yahoo email, no custom domain.","city":"Carnegie, PA","industry":"Painting","plan":"Basic"},{"name":"Rite Now Mobile Detailing Inc.","classification":"definite_hit","url":"https://ritenowmobiledetailing.com/","note":"Professional website. Family-owned since 1994. BBB accredited.","city":"FL","industry":"Automotive","plan":"Essentials"},{"name":"Jokey's Plumbing LLC","classification":"maybe_hit","url":"","note":"Facebook page and HomeAdvisor/BBB listings. Gmail, no website.","city":"Cottondale, FL","industry":"Plumbing","plan":"Essentials"},{"name":"Manara Services","classification":"maybe_hit","url":"","note":"Facebook page, Yellow Pages, Yelp, BBB. Hotmail email, no website.","city":"Mississauga, ON","industry":"Garage","plan":"Basic"},{"name":"BLACK DIAMOND BUILDERS LLC","classification":"likely_hit","url":"https://blackdiamondbuilderllc.com","note":"Email domain suggests website exists. Facebook page and Angi listings.","city":"Clarksville, AR","industry":"General Contractor","plan":"Basic"},{"name":"Affinity Outdoors, LLC","classification":"likely_hit","url":"https://affinityoutdoorsia.com","note":"Email domain points to site that exists but returned 403.","city":"Norwalk, IA","industry":"Landscaping","plan":"Basic"},{"name":"Claudia's Best Housekeeping Services","classification":"definite_hit","url":"https://www.claudiasbesthousekeeping.com/","note":"Professional website. Also has Facebook. 10+ years in business.","city":"Albuquerque, NM","industry":"Home Cleaning","plan":"MAX"},{"name":"Happy To Help","classification":"definite_hit","url":"https://www.happytohelpms.com/","note":"Professional website with services, pricing, FAQs, and booking.","city":"Starkville, MS","industry":"Neighborhood Chores","plan":"Essentials"},{"name":"Spyglass Property Inspections","classification":"definite_hit","url":"https://spyglassinspections.net/","note":"Professional website (rebranded as MAC7). 5,000+ inspections since 2007.","city":"Rolling Meadows, IL","industry":"Home Inspection","plan":"MAX"},{"name":"Always Koolin","classification":"maybe_hit","url":"","note":"Yelp and BBB listings only. iCloud email, no custom domain.","city":"Riverside, CA","industry":"HVAC","plan":"Essentials"},{"name":"Clean&Fix TampaBay","classification":"definite_hit","url":"https://tampacleanfix.com/","note":"Professional website. Has booking, testimonials. Fully insured.","city":"Tampa, FL","industry":"Home Cleaning","plan":"Basic"},{"name":"Quality Air Service NC LLC","classification":"maybe_hit","url":"","note":"Facebook page, Carrier dealer listing. iCloud email, no website.","city":"Raleigh, NC","industry":"HVAC","plan":"Essentials"},{"name":"Foxxua Heating & Cooling, LLC","classification":"definite_hit","url":"https://foxxua.com/","note":"Professional website. HVAC in Blue Springs, MO.","city":"Blue Springs, MO","industry":"HVAC","plan":"MAX"},{"name":"Stewart's Tree Professional","classification":"maybe_hit","url":"","note":"Facebook page, Birdeye (4.9 stars, 58 reviews). Gmail, no website.","city":"New Smyrna Beach, FL","industry":"Landscaping","plan":"Basic"},{"name":"ANDERSON HVAC","classification":"maybe_hit","url":"","note":"HomeAdvisor and Angi only. Gmail, no website.","city":"Lynn, MA","industry":"HVAC","plan":"Basic"},{"name":"Dumont Drains LLC","classification":"maybe_hit","url":"","note":"Facebook page, BBB. Very new (Mar 2025). Gmail, no website.","city":"Dumont, NJ","industry":"Sewer & Septic","plan":"Basic"},{"name":"BG General Contracting","classification":"no_hit","url":"","note":"No web presence found at all. No website, social media, or listings.","city":"Lynnwood, WA","industry":"HVAC","plan":"Essentials"},{"name":"KFS Plumbing","classification":"definite_hit","url":"https://www.kfsplumbing.ca/","note":"Professional Squarespace website. Red Seal licensed since 2022.","city":"Fredericton, NB","industry":"Plumbing","plan":"Basic"},{"name":"San Diego Climate Comfort","classification":"definite_hit","url":"https://sdclimatecomfort.com/","note":"Professional website. Licensed HVAC in Chula Vista, CA.","city":"Chula Vista, CA","industry":"HVAC","plan":"Basic"},{"name":"Nelson Garage Solutions","classification":"maybe_hit","url":"","note":"Yelp listing only. Gmail, very minimal web presence.","city":"Nebraska City, NE","industry":"Garage","plan":"Essentials"},{"name":"Yearound Service Co","classification":"maybe_hit","url":"","note":"Facebook, Yelp, Angi, BBB listings. Yahoo email, no website. Since 2008.","city":"Chicago, IL","industry":"HVAC","plan":"Essentials"},{"name":"JMFP DRAFTING, DESIGN AND CONSTRUCTION LLC","classification":"no_hit","url":"","note":"No web presence found. No website, social media, or listings.","city":"Wailuku, HI","industry":"Landscaping","plan":"Basic"},{"name":"Renovations & Restorations Plus, LLC","classification":"no_hit","url":"","note":"No website, social media, or listings found.","city":"Castle Rock, CO","industry":"Restoration","plan":"Basic"},{"name":"Silvernail Services LLC","classification":"no_hit","url":"","note":"Only state business registration found. No web presence.","city":"Turlock, CA","industry":"Landscaping","plan":"Basic"},{"name":"Apex Air Conditioning Services Inc","classification":"maybe_hit","url":"","note":"Yelp, BBB, directory listings. Gmail, no website. Inc Oct 2024.","city":"Riverside, CA","industry":"HVAC","plan":"Essentials"},{"name":"octopus property services, llc","classification":"maybe_hit","url":"","note":"BBB, Thumbtack, Nextdoor listings. Gmail, no website.","city":"Las Vegas, NV","industry":"Handyman","plan":"Basic"},{"name":"Anderson's Heat & Air","classification":"definite_hit","url":"https://www.andersonheatandair.com/","note":"Dedicated website. BBB A+ rated. 25+ years in business.","city":"Binger, OK","industry":"HVAC","plan":"Essentials"},{"name":"Brad Tweed Mechanical Services LLC","classification":"definite_hit","url":"https://bradtweed.com/","note":"Professional website. BBB A+, Carrier dealer. 18+ years.","city":"Greeneville, TN","industry":"HVAC","plan":"MAX"},{"name":"Geo Thermo Drilling","classification":"definite_hit","url":"https://geothermal-drilling-inc.com/","note":"Website for Geothermal Drilling Inc & McPike Water Wells.","city":"McKinney, TX","industry":"Sewer & Septic","plan":"MAX"},{"name":"Gage Electric LLC","classification":"likely_hit","url":"https://www.gageelectricme.com","note":"Email domain admin@gageelectricme.com strongly suggests website exists.","city":"Orland, ME","industry":"Electrical","plan":"Basic"},{"name":"Premier Plumbing Solutions","classification":"no_hit","url":"","note":"No website found. iCloud email, 2025 in email suggests very new.","city":"Murchison, TX","industry":"Plumbing","plan":"Basic"},{"name":"Doors Plus More LLC","classification":"definite_hit","url":"https://doorsplusmore.us/","note":"Dedicated website matching email domain. BBB since 2017. Since 2003.","city":"Walworth, NY","industry":"Doors","plan":"MAX"},{"name":"Dunstan Heating and Cooling","classification":"maybe_hit","url":"","note":"Chamber of Commerce listing. Gmail, no website.","city":"St. Augustine, FL","industry":"HVAC","plan":"Basic"},{"name":"Get \"R\" Done well service","classification":"definite_hit","url":"https://getrdonewell.com/","note":"Dedicated website. BBB, Facebook, HomeAdvisor. 7+ years.","city":"Luther, OK","industry":"Well Pumps","plan":"Essentials"},{"name":"Fire Solutions Designs","classification":"likely_hit","url":"https://fsdesigns.com","note":"Email domain design@fsdesigns.com implies website exists.","city":"Great Falls, MT","industry":"Business Services","plan":"Basic"},{"name":"Falcon Remodeling & Construction Inc","classification":"definite_hit","url":"https://www.falconrci.com/","note":"Dedicated website. Licensed FL GC. In business since 1982.","city":"Windermere, FL","industry":"General Contractor","plan":"Basic"},{"name":"Garcia Rodriguez Landscaping LLC","classification":"maybe_hit","url":"","note":"Facebook page. Registered FL LLC since 2020. No website.","city":"Stuart, FL","industry":"Landscaping","plan":"Basic"},{"name":"Clean Slate Co.","classification":"likely_hit","url":"https://cleanslatecompanies.com","note":"Email domain implies website. Domain exists but content unverified.","city":"Hubert, NC","industry":"Home Cleaning","plan":"Basic"},{"name":"Palmetto Property Solutions Upstate LLC","classification":"definite_hit","url":"https://www.palmettopropertysolutionsupstate.com/","note":"Dedicated website. Facebook, LinkedIn, BBB. Started 2021.","city":"Piedmont, SC","industry":"Landscaping","plan":"Essentials"},{"name":"INK PLUMBING, LLC.","classification":"likely_hit","url":"https://www.inkplumbing.com/","note":"Domain appeared in results but DNS currently failing. May be temporarily down.","city":"McKinney, TX","industry":"Plumbing","plan":"Basic"},{"name":"Harrell HVAC Service LLC","classification":"maybe_hit","url":"","note":"Facebook page. Gmail, no website.","city":"Magnolia, AR","industry":"HVAC","plan":"Essentials"},{"name":"First Impression Landscape LLC.","classification":"definite_hit","url":"https://firstimpressionlandscape.com/","note":"Dedicated website. BBB, Facebook, HomeAdvisor. Since 2011.","city":"Kittanning, PA","industry":"Landscaping","plan":"MAX+"},{"name":"Hercules Plumbing Inc.","classification":"definite_hit","url":"https://herculesplumbinginc.com/","note":"Dedicated website. Family-owned, 30+ years. Open 24/7.","city":"Riverside, CA","industry":"Plumbing","plan":"Essentials"},{"name":"All Weather Heating and Air Conditioning","classification":"definite_hit","url":"https://allweatherheatac.com/","note":"Dedicated website. Family-owned, Portland IN. 24/7 emergency.","city":"Portland, IN","industry":"HVAC","plan":"MAX"},{"name":"Forgach Plumbing LLC","classification":"definite_hit","url":"https://www.forgachplumbingllc.com/","note":"Dedicated website with online booking. Open 7 days.","city":"Matthews, NC","industry":"Plumbing","plan":"Basic"},{"name":"Ninety 1 LLC","classification":"no_hit","url":"","note":"No web presence found. Gmail, generic name returns unrelated results.","city":"Los Angeles, CA","industry":"General Contractor","plan":"Essentials"},{"name":"Thorough clean","classification":"no_hit","url":"","note":"No website, social media, or listings found. Generic name.","city":"Spokane, WA","industry":"Home Cleaning","plan":"Essentials"}];
+
+const config = {
+  definite_hit: { label: 'Definite Hit', color: '#10b981', cssClass: 'definite', desc: 'Have a real, dedicated business website' },
+  likely_hit:   { label: 'Likely Hit',   color: '#3b82f6', cssClass: 'likely',   desc: 'Strong evidence of a website (email domain matches, site exists but unverified)' },
+  maybe_hit:    { label: 'Maybe',        color: '#f59e0b', cssClass: 'maybe',    desc: 'Social media or directory presence but no dedicated website' },
+  no_hit:       { label: 'No Hit',       color: '#ef4444', cssClass: 'nohit',    desc: 'No web presence found at all' }
+};
+
+const order = ['definite_hit', 'likely_hit', 'maybe_hit', 'no_hit'];
+const grouped = {};
+order.forEach(k => grouped[k] = []);
+data.forEach(d => grouped[d.classification].push(d));
+
+const container = document.getElementById('sections');
+
+order.forEach(key => {
+  const items = grouped[key];
+  const cfg = config[key];
+  const section = document.createElement('div');
+  section.className = 'section';
+
+  let cardsHtml = '';
+  items.forEach(item => {
+    const urlHtml = item.url
+      ? `<div class="url"><a href="${item.url}" target="_blank" rel="noopener">${item.url}</a></div>`
+      : '';
+    const escapedNote = item.note.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const escapedName = item.name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    cardsHtml += `
+      <div class="card">
+        <div class="biz-name">${escapedName}</div>
+        <div class="meta">
+          <span>${item.city}</span>
+          <span>${item.industry}</span>
+          <span>${item.plan}</span>
+        </div>
+        ${urlHtml}
+        <div class="note">${escapedNote}</div>
+      </div>`;
+  });
+
+  section.innerHTML = `
+    <div class="section-header">
+      <h2>${cfg.label}</h2>
+      <span class="badge ${cfg.cssClass}">${items.length} pros</span>
+      <span style="color:#94a3b8;font-size:0.85rem;">${cfg.desc}</span>
+    </div>
+    <div class="cards-grid">${cardsHtml}</div>`;
+
+  container.appendChild(section);
+});
+</script>
+</body>
+</html>

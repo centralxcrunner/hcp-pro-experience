@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCP AI — Context Architecture Overview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f5f7; color: #1a1a2e; font-size: 14px; }
+
+  .header { background: linear-gradient(135deg, #0c1445 0%, #1a237e 60%, #283593 100%); color: white; padding: 36px 52px 32px; }
+  .header h1 { font-size: 26px; font-weight: 800; margin-bottom: 4px; letter-spacing: -.3px; }
+  .header .sub { font-size: 14px; color: #90caf9; margin-bottom: 16px; }
+  .header .summary { color: #c5cae9; font-size: 13px; line-height: 1.7; max-width: 820px; }
+
+  .container { max-width: 1040px; margin: 0 auto; padding: 28px 24px; }
+  .section { background: white; border-radius: 12px; padding: 26px 30px; margin-bottom: 22px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  .section-title { font-size: 15px; font-weight: 800; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; color: #0c1445; border-bottom: 2px solid #e8eaf6; padding-bottom: 12px; letter-spacing: -.1px; }
+
+  /* Stat callouts */
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 6px; }
+  .stat { border-radius: 10px; padding: 16px; text-align: center; }
+  .stat.red { background: #fff1f2; border: 1px solid #fecdd3; }
+  .stat.amber { background: #fffbeb; border: 1px solid #fde68a; }
+  .stat.blue { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .stat.green { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .stat .num { font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+  .stat.red .num { color: #dc2626; }
+  .stat.amber .num { color: #d97706; }
+  .stat.blue .num { color: #1d4ed8; }
+  .stat.green .num { color: #059669; }
+  .stat .label { font-size: 11px; color: #475569; line-height: 1.4; }
+  .stat .source { font-size: 10px; color: #94a3b8; margin-top: 4px; font-style: italic; }
+
+  /* Latency bar */
+  .latency-scale { margin: 20px 0 6px; }
+  .latency-bar { height: 28px; border-radius: 6px; background: linear-gradient(to right, #22c55e 0%, #86efac 15%, #fde68a 30%, #fb923c 50%, #ef4444 75%, #991b1b 100%); position: relative; }
+  .latency-markers { display: flex; justify-content: space-between; margin-top: 6px; }
+  .latency-marker { font-size: 10px; color: #64748b; text-align: center; flex: 1; }
+  .latency-marker strong { display: block; font-size: 11px; font-weight: 700; color: #374151; }
+  .latency-label { font-size: 11px; color: #64748b; margin-bottom: 6px; font-weight: 600; }
+
+  /* Problem/solution comparison */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; }
+  .compare-col { padding: 18px 22px; }
+  .compare-col.prob { background: #fff1f2; border-right: 1px solid #fecdd3; }
+  .compare-col.sol { background: #f0fdf4; }
+  .compare-col h4 { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px; }
+  .compare-col.prob h4 { color: #dc2626; }
+  .compare-col.sol h4 { color: #059669; }
+  .compare-col ul { list-style: none; }
+  .compare-col ul li { font-size: 12px; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.06); color: #374151; display: flex; gap: 8px; line-height: 1.4; }
+  .compare-col ul li:last-child { border-bottom: none; }
+  .compare-col.prob ul li::before { content: "✗"; color: #fca5a5; flex-shrink: 0; }
+  .compare-col.sol ul li::before { content: "✓"; color: #6ee7b7; flex-shrink: 0; }
+
+  /* Latency math */
+  .math-block { background: #0f172a; border-radius: 10px; padding: 20px 24px; color: #e2e8f0; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; line-height: 2; }
+  .math-block .label { color: #64748b; }
+  .math-block .val { color: #86efac; font-weight: 700; }
+  .math-block .bad { color: #fca5a5; font-weight: 700; }
+  .math-block .ok { color: #86efac; font-weight: 700; }
+  .math-block .total { color: #fde68a; font-weight: 800; font-size: 13px; }
+  .math-block .divider { border-top: 1px solid #1e293b; margin: 8px 0; }
+
+  /* Channel comparison */
+  .channel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .channel { border-radius: 10px; padding: 18px 20px; }
+  .channel.voice { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .channel.sms { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .channel h4 { font-size: 14px; font-weight: 800; margin-bottom: 10px; }
+  .channel.voice h4 { color: #1e40af; }
+  .channel.sms h4 { color: #065f46; }
+  .channel .budget { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .channel.voice .budget { color: #3b82f6; }
+  .channel.sms .budget { color: #10b981; }
+  .channel ul { list-style: none; }
+  .channel ul li { font-size: 12px; color: #374151; padding: 4px 0; display: flex; gap: 7px; line-height: 1.4; }
+  .channel ul li::before { content: "→"; color: #94a3b8; flex-shrink: 0; }
+
+  /* Endpoint spec */
+  .endpoint-box { background: #0f172a; border-radius: 10px; padding: 20px 24px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; line-height: 1.9; color: #e2e8f0; }
+  .endpoint-box .method { color: #86efac; font-weight: 700; }
+  .endpoint-box .path { color: #93c5fd; font-weight: 700; }
+  .endpoint-box .comment { color: #475569; }
+  .endpoint-box .key { color: #93c5fd; }
+  .endpoint-box .val { color: #86efac; }
+  .endpoint-box .type { color: #fde68a; }
+  .endpoint-box .section-break { color: #334155; border-top: 1px solid #1e293b; margin: 12px 0 4px; padding-top: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; }
+
+  /* Context breakdown */
+  .context-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 6px; }
+  .ctx-card { border-radius: 10px; padding: 16px 18px; border: 1px solid; }
+  .ctx-card.realtime { background: #eff6ff; border-color: #bfdbfe; }
+  .ctx-card.daily { background: #faf5ff; border-color: #d8b4fe; }
+  .ctx-card.static { background: #f0fdf4; border-color: #bbf7d0; }
+  .ctx-card .ct-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .ctx-card.realtime .ct-label { color: #1d4ed8; }
+  .ctx-card.daily .ct-label { color: #6d28d9; }
+  .ctx-card.static .ct-label { color: #059669; }
+  .ctx-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 5px; color: #0f172a; }
+  .ctx-card p { font-size: 11px; color: #475569; line-height: 1.5; }
+  .ctx-card .ct-items { font-size: 11px; color: #64748b; margin-top: 8px; }
+  .ctx-card .ct-items li { list-style: none; padding: 2px 0; }
+  .ctx-card .ct-items li::before { content: "· "; color: #94a3b8; }
+
+  /* Link cards */
+  .link-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .link-card { border-radius: 10px; padding: 18px 20px; border: 1px solid; cursor: pointer; text-decoration: none; display: block; }
+  .link-card.pro { background: #f0fdf4; border-color: #6ee7b7; }
+  .link-card.customer { background: #eff6ff; border-color: #93c5fd; }
+  .link-card.agent { background: #faf5ff; border-color: #c4b5fd; }
+  .link-card .lc-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .link-card.pro .lc-label { color: #059669; }
+  .link-card.customer .lc-label { color: #1d4ed8; }
+  .link-card.agent .lc-label { color: #6d28d9; }
+  .link-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+  .link-card p { font-size: 11px; color: #475569; line-height: 1.5; }
+  .link-card .lc-arrow { font-size: 18px; margin-top: 10px; }
+  .link-card.pro .lc-arrow { color: #059669; }
+  .link-card.customer .lc-arrow { color: #1d4ed8; }
+  .link-card.agent .lc-arrow { color: #6d28d9; }
+
+  /* Q list */
+  .q-list { list-style: none; }
+  .q-list li { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px; color: #374151; line-height: 1.5; }
+  .q-list li:last-child { border-bottom: none; }
+  .q-num { font-weight: 700; color: #3b82f6; flex-shrink: 0; width: 18px; }
+
+  .note { background: #fefce8; border-left: 3px solid #fbbf24; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12px; color: #78350f; line-height: 1.5; margin-top: 16px; }
+  .note-blue { background: #eff6ff; border-left: 3px solid #60a5fa; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12px; color: #1e3a8a; line-height: 1.5; margin-top: 16px; }
+
+  .cite { font-size: 10px; color: #94a3b8; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>HCP AI — Context Architecture</h1>
+  <div class="sub">Why context is the product · The case for a single context endpoint · Voice vs. SMS tradeoffs</div>
+  <div class="summary">
+    The quality of an AI interaction is almost entirely determined by what context it has when it starts talking. The research is unambiguous on this. Right now HCP AI fetches context in small pieces, mid-call, via tool calls. That approach has a measurable latency cost, a documented accuracy cost, and a compounding effect on call outcomes. This document makes the case for a different architecture — one rich context endpoint, loaded once at session start, consumed by every channel.
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- SECTION 1: WHY CONTEXT MATTERS -->
+  <div class="section">
+    <div class="section-title">🧠 Why Context Is the Product</div>
+
+    <p style="font-size:12px;color:#475569;margin-bottom:18px;line-height:1.7;">The LLM itself is not the differentiator. Every competitor has access to the same models. The differentiator is what you put in the context window before the model responds. The research on this is now extensive and consistent.</p>
+
+    <div class="stat-row">
+      <div class="stat red">
+        <div class="num">66%</div>
+        <div class="label">Error rate with <em>insufficient</em> context — worse than no context at all</div>
+        <div class="source">Google Research / ICLR 2025</div>
+      </div>
+      <div class="stat blue">
+        <div class="num">10%</div>
+        <div class="label">Error rate with <em>no</em> context. Partial context actively misleads the model.</div>
+        <div class="source">Google Research / ICLR 2025</div>
+      </div>
+      <div class="stat green">
+        <div class="num">96%</div>
+        <div class="label">Reduction in hallucinations with rich, complete context injection</div>
+        <div class="source">Stanford, 2024</div>
+      </div>
+      <div class="stat amber">
+        <div class="num">40%+</div>
+        <div class="label">Reduction in hallucination rates (RAG vs. no-context baseline in production systems)</div>
+        <div class="source">PMC / MEGA-RAG, 2024</div>
+      </div>
+    </div>
+
+    <div class="note-blue" style="margin-top:18px;">
+      <strong>The key finding:</strong> Insufficient context is actively worse than no context. The model becomes confidently wrong. This is the current state of HCP AI — it has access to some context via mid-call tool calls, but not enough, not fast enough, and not structured well enough to prevent bad outcomes. The solution is not more tool calls. It's richer upfront context.
+      <span class="cite"> — Google Research, "Deeper Insights into RAG: The Role of Sufficient Context," ICLR 2025</span>
+    </div>
+
+    <div style="margin-top:18px;padding:16px 18px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">
+      <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:10px;">Context placement matters too — "Lost in the Middle" (Stanford / MIT, 2024)</div>
+      <p style="font-size:12px;color:#475569;line-height:1.6;">LLM performance degrades significantly when relevant information is buried in the middle of a long context — even in models explicitly built for long-context use. Performance is highest when key information appears near the start. Implication: structured context delivered in a logical order matters as much as the content itself.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 2: THE LATENCY PROBLEM WITH TOOL CALLS -->
+  <div class="section">
+    <div class="section-title">⏱️ The Latency Problem — Why Tool Calls Break Voice AI</div>
+
+    <p style="font-size:12px;color:#475569;margin-bottom:20px;line-height:1.7;">In a voice conversation, latency isn't a technical metric — it's directly perceived by the caller as hesitation, confusion, or incompetence. Every mid-call tool call adds a full additional inference cycle. In voice, that's the difference between a natural conversation and a broken one.</p>
+
+    <div class="latency-label">Latency perception scale for voice AI</div>
+    <div class="latency-scale">
+      <div class="latency-bar"></div>
+      <div class="latency-markers">
+        <div class="latency-marker"><strong>&lt;300ms</strong>Natural<br>imperceptible</div>
+        <div class="latency-marker"><strong>300–500ms</strong>Unconsciously<br>perceived</div>
+        <div class="latency-marker"><strong>500–800ms</strong>Consciously<br>noticed</div>
+        <div class="latency-marker"><strong>&gt;1,000ms</strong>+40% call<br>abandonment</div>
+        <div class="latency-marker"><strong>&gt;1,500ms</strong>Conversation<br>breaks down</div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:#94a3b8;margin-top:4px;text-align:right;font-style:italic;">Sources: AssemblyAI, Hamming AI, Vapi, SignalWire — 2024</div>
+
+    <div style="margin-top:22px;margin-bottom:16px;font-size:13px;font-weight:700;color:#374151;">The math on a single mid-call tool call</div>
+
+    <div class="math-block">
+<span class="comment">// What happens when HCP AI makes a tool call mid-conversation</span>
+
+<span class="label">STT (speech to text):          </span><span class="val">~100ms</span>
+<span class="label">LLM first inference pass:      </span><span class="val">~300ms</span>   <span class="comment">// decides a tool call is needed</span>
+<span class="label">Tool call execution:           </span><span class="val">~200ms</span>   <span class="comment">// API roundtrip to HCP backend</span>
+<span class="label">LLM second inference pass:     </span><span class="val">~300ms</span>   <span class="comment">// re-runs with tool result appended</span>
+<span class="label">TTS (text to speech):          </span><span class="val">~90ms</span>
+<div class="divider"></div>
+<span class="total">Total end-to-end (with tool call): ~990ms — at the abandonment threshold</span>
+
+<span class="comment">
+// "Any function call requires two inference passes instead of one.
+//  This effectively doubles LLM first-token latency for that turn."
+//  — Daily.co, Benchmarking LLMs for Voice Agent Use Cases</span>
+
+<div class="divider"></div>
+<span class="comment">// Best case with context pre-loaded (no mid-call tool calls)</span>
+
+<span class="label">STT:                           </span><span class="ok">~100ms</span>
+<span class="label">LLM single pass:               </span><span class="ok">~300ms</span>
+<span class="label">TTS:                           </span><span class="ok">~90ms</span>
+<div class="divider"></div>
+<span class="total">Total end-to-end (pre-loaded):     ~490ms — feels natural</span>
+    </div>
+
+    <div class="note" style="margin-top:0;">
+      <strong>Two inference passes vs. one.</strong> A single mid-call tool call roughly doubles LLM latency for that turn. HCP AI currently makes multiple tool calls per call to look up Pro info, availability, and customer data. Each one adds ~500ms to the caller's wait. This is not a prompt engineering problem — it's an architecture problem.
+    </div>
+
+    <div style="margin-top:18px;">
+      <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:10px;">The token-latency tradeoff</div>
+      <p style="font-size:12px;color:#475569;line-height:1.7;">Pre-loading context isn't free either. Glean's empirical study (GPT-4 Turbo, 50–100k tokens tested) found: <strong>every additional 500 tokens adds ~100ms to first-token latency</strong>. A well-structured 5,000-token context block adds roughly 1,000ms — but this is a one-time cost paid at session start, before the AI speaks, not a recurring cost paid mid-conversation. The tradeoff is clear: pay it once at the top, or pay it repeatedly throughout the call.
+      <span class="cite"> — Glean Engineering, "How Input Token Count Impacts the Latency of AI Chat Tools," 2024</span></p>
+    </div>
+  </div>
+
+  <!-- SECTION 3: VOICE VS SMS -->
+  <div class="section">
+    <div class="section-title">📡 Voice vs. SMS — Different Latency Budgets, Same Context Need</div>
+
+    <p style="font-size:12px;color:#475569;margin-bottom:18px;line-height:1.7;">The context we need is the same across channels. The latency constraints are not. This shapes how and when we can do richer processing.</p>
+
+    <div class="channel-grid">
+      <div class="channel voice">
+        <h4>📞 Voice (HCP AI — Today)</h4>
+        <div class="budget">Latency budget: &lt;500ms end-to-end</div>
+        <ul>
+          <li>Human conversation gap is 200–300ms — that's the bar</li>
+          <li>Context must be <strong>fully pre-loaded</strong> before the AI speaks its first word</li>
+          <li>Zero tolerance for mid-call tool calls on data that can be known upfront</li>
+          <li>&gt;1,000ms response = 40% more abandonment (industry benchmark)</li>
+          <li>68% of customers abandon calls that "feel sluggish"</li>
+          <li>Context must be cached and ready — not assembled on demand</li>
+          <li>Richer processing (e.g., job history distillation) must happen offline, pre-session</li>
+        </ul>
+      </div>
+      <div class="channel sms">
+        <h4>💬 SMS (HCP AI — Coming)</h4>
+        <div class="budget">Latency budget: 1–3 seconds acceptable</div>
+        <ul>
+          <li>No natural conversational rhythm to match — async by default</li>
+          <li>Callers expect slight delays in text; &lt;3s feels instant</li>
+          <li>More room for richer real-time context assembly at message receipt</li>
+          <li>Can do live lookups that would be too slow for voice</li>
+          <li>Can fetch full job history inline, not just cached summaries</li>
+          <li>Still benefits from pre-loaded Pro + Customer base context</li>
+          <li>Opens door to richer agentic actions (booking, estimate sending, follow-up)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-blue">
+      <strong>Same endpoint, different payload depth.</strong> The context endpoint can serve both channels. For voice: return the pre-cached, compressed payload — built for latency. For SMS: return the full payload including richer data that would be too heavy for voice. A single <code style="background:#dbeafe;padding:1px 5px;border-radius:3px;">channel</code> parameter controls which profile the endpoint returns.
+    </div>
+  </div>
+
+  <!-- SECTION 4: THE ENDPOINT -->
+  <div class="section">
+    <div class="section-title">🔌 The Solution — One Endpoint, Rich Structured JSON</div>
+
+    <p style="font-size:12px;color:#475569;margin-bottom:18px;line-height:1.7;">We need a single endpoint that any HCP AI channel can hit at session start and get back a complete, structured context block. No mid-session tool calls for data that can be known in advance. The endpoint accepts what's known at that moment — phone number, customer ID if resolved, Pro ID always — and returns everything we have.</p>
+
+    <div class="endpoint-box">
+<span class="comment">// The HCP AI Context Endpoint</span>
+
+<span class="method">GET</span> <span class="path">/v1/ai/context</span>
+
+<span class="section-break">— Parameters (pass what you have) —</span>
+<span class="key">pro_id</span>          <span class="type">string</span>   <span class="comment">// required — always known from the HCP AI phone number</span>
+<span class="key">phone_number</span>    <span class="type">string</span>   <span class="comment">// optional — caller ANI; used to resolve customer_id</span>
+<span class="key">customer_id</span>     <span class="type">string</span>   <span class="comment">// optional — if known (from prior resolution)</span>
+<span class="key">channel</span>         <span class="type">enum</span>     <span class="comment">// "voice" | "sms" — controls payload depth</span>
+
+<span class="section-break">— Response —</span>
+<span class="key">pro</span>             <span class="comment">// Pro context block (see Pro Context spec)</span>
+  <span class="key">business</span>      <span class="comment">// identity, contact, licenses</span>
+  <span class="key">service_area</span>  <span class="comment">// active zip codes, cities</span>
+  <span class="key">services</span>      <span class="comment">// what they do, what they don't</span>
+  <span class="key">hours</span>         <span class="comment">// availability, timezone, after-hours rule</span>
+  <span class="key">calendar</span>      <span class="comment">// next available slots</span>
+  <span class="key">team</span>          <span class="comment">// technician names and roles</span>
+  <span class="key">ai_config</span>     <span class="comment">// greeting, escalation number, custom instructions</span>
+  <span class="key">intelligence</span>  <span class="comment">// pre-built from daily batch agent (job history distillation)</span>
+
+<span class="key">customer</span>        <span class="comment">// Customer context block — null if phone not matched</span>
+  <span class="key">identity</span>      <span class="comment">// name, phones, addresses, tags, notes</span>
+  <span class="key">jobs</span>          <span class="comment">// all jobs — status, type, appointments</span>
+  <span class="key">estimates</span>     <span class="comment">// open estimates</span>
+  <span class="key">call_history</span>  <span class="comment">// prior HCP AI transcripts + outcomes</span>
+  <span class="key">sms_threads</span>   <span class="comment">// recent messages</span>
+  <span class="key">campaigns</span>     <span class="comment">// marketing sent, opened, clicked</span>
+  <span class="key">memberships</span>   <span class="comment">// active recurring plans</span>
+
+<span class="key">meta</span>
+  <span class="key">customer_resolved</span>  <span class="comment">// true | false</span>
+  <span class="key">channel</span>            <span class="comment">// "voice" | "sms"</span>
+  <span class="key">context_age_ms</span>     <span class="comment">// how fresh the pro.intelligence block is</span>
+    </div>
+
+    <div class="note" style="margin-top:16px;">
+      <strong>The AI has one job at session start:</strong> hit this endpoint, receive the block, inject it into the system prompt. No decisions, no multiple calls, no sequential lookups. One call, full context. The endpoint handles the complexity of assembly — the AI just consumes the result.
+    </div>
+  </div>
+
+  <!-- SECTION 5: HOW CONTEXT IS BUILT -->
+  <div class="section">
+    <div class="section-title">🏗️ How the Context Is Built — Three Layers</div>
+
+    <p style="font-size:12px;color:#475569;margin-bottom:18px;line-height:1.7;">Not all context has the same freshness requirement or assembly cost. We split it into three layers with different update cadences — the endpoint assembles and serves all three at call time.</p>
+
+    <div class="context-cards">
+      <div class="ctx-card realtime">
+        <div class="ct-label">⚡ Real-Time</div>
+        <h4>Fetched at session start</h4>
+        <p>Volatile data that changes frequently. Assembled fresh for every call. Must be fast — cached at the field level where possible.</p>
+        <ul class="ct-items">
+          <li>Available calendar slots</li>
+          <li>Open jobs / active appointments</li>
+          <li>Open SMS threads</li>
+          <li>Technician availability today</li>
+          <li>Customer phone → identity lookup</li>
+        </ul>
+      </div>
+      <div class="ctx-card daily">
+        <div class="ct-label">🕐 Daily Batch</div>
+        <h4>Pre-built, stored, retrieved</h4>
+        <p>Rich intelligence that takes time to generate. Built once per day per Pro by a background agent. Retrieved instantly at call time — zero assembly latency.</p>
+        <ul class="ct-items">
+          <li>Job history distillation (180 days)</li>
+          <li>Service frequency patterns</li>
+          <li>Real pricing ranges from invoices</li>
+          <li>Tech note themes</li>
+          <li>Pro narrative summary paragraph</li>
+        </ul>
+      </div>
+      <div class="ctx-card static">
+        <div class="ct-label">📋 Near-Static</div>
+        <h4>Cached, refreshed on change</h4>
+        <p>Configuration data that changes rarely. Cached aggressively. Invalidated and refreshed when a Pro updates their settings.</p>
+        <ul class="ct-items">
+          <li>Business name, hours, timezone</li>
+          <li>Service area (configured)</li>
+          <li>AI config (greeting, escalation)</li>
+          <li>Team roster</li>
+          <li>OLB settings</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;padding:14px 18px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:12px;color:#374151;line-height:1.6;">
+      <strong>Why the daily batch layer matters:</strong> 180 days of job history is too large to process at call time — hundreds to thousands of jobs per Pro. The daily batch agent runs this processing offline, produces a compact structured profile (~2–3k tokens), and stores it for instant retrieval. This is how we get the richest possible Pro intelligence with zero latency cost on live calls.
+    </div>
+  </div>
+
+  <!-- SECTION 6: BUSINESS CASE -->
+  <div class="section">
+    <div class="section-title">📈 The Business Case — What This Is Worth</div>
+
+    <div class="stat-row">
+      <div class="stat red">
+        <div class="num">27%</div>
+        <div class="label">Of inbound calls missed by home service Pros on average</div>
+        <div class="source">Industry, multiple sources</div>
+      </div>
+      <div class="stat amber">
+        <div class="num">85%</div>
+        <div class="label">Of callers who go unanswered do not call back</div>
+        <div class="source">Industry benchmark</div>
+      </div>
+      <div class="stat blue">
+        <div class="num">10%→70%</div>
+        <div class="label">Booking rate lift from a well-contextualized AI CSR (one electric company)</div>
+        <div class="source">Avoca AI case study</div>
+      </div>
+      <div class="stat green">
+        <div class="num">40%</div>
+        <div class="label">Higher call abandonment when voice agent response exceeds 1 second</div>
+        <div class="source">Contact center research</div>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:#475569;margin-top:18px;line-height:1.7;">HCP AI currently sits at ~16% call-to-booked conversion. The gap between that and what well-contextualized AI achieves in comparable home service deployments is not primarily a model problem or a prompt problem — it's a context problem. The AI doesn't know enough about the Pro it's representing or the customer it's speaking to before the call starts.</p>
+  </div>
+
+  <!-- SECTION 7: DETAILED SPECS -->
+  <div class="section">
+    <div class="section-title">📄 Detailed Specifications</div>
+
+    <p style="font-size:12px;color:#475569;margin-bottom:18px;line-height:1.7;">The three documents below define exactly what goes into each part of the context block — every field, its priority, its sensitivity level, and open engineering questions.</p>
+
+    <div class="link-cards">
+      <a class="link-card pro" href="Pro Context - HCP AI One Pager.html">
+        <div class="lc-label">🏢 Pro Context</div>
+        <h4>Pro Context Service</h4>
+        <p>Every field the AI needs about the Pro's business — identity, services, hours, calendar, team, OLB, AI config, reputation, payments. Pre-loaded at session start.</p>
+        <div class="lc-arrow">→</div>
+      </a>
+      <a class="link-card customer" href="Customer Context - HCP AI One Pager.html">
+        <div class="lc-label">👤 Customer Context</div>
+        <h4>Customer Context Service</h4>
+        <p>Everything we know about the caller — jobs, estimates, call history, SMS threads, campaigns received, recurring plans. Resolved via phone number lookup + tool call fallback.</p>
+        <div class="lc-arrow">→</div>
+      </a>
+      <a class="link-card agent" href="Pro Intelligence Agent - HCP AI One Pager.html">
+        <div class="lc-label">🤖 Daily Batch Agent</div>
+        <h4>Pro Intelligence Agent</h4>
+        <p>Runs once per day. Reads 180 days of completed jobs — titles, line items, tech notes — and distills them into a structured intelligence profile ready for instant injection.</p>
+        <div class="lc-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- OPEN QUESTIONS -->
+  <div class="section">
+    <div class="section-title">❓ Open Questions</div>
+    <ul class="q-list">
+      <li><span class="q-num">1</span>What's the target latency for the context endpoint to return, end-to-end, for the voice channel? This defines the SLA for every sub-component — real-time fetches, cache reads, identity resolution.</li>
+      <li><span class="q-num">2</span>For voice: do we inject the full context block into the system prompt on every session, or only fields that are relevant to the detected caller intent? A shorter, focused prompt has lower TTFT (Glean: ~100ms per 500 tokens) — worth defining the tradeoff.</li>
+      <li><span class="q-num">3</span>For SMS: the relaxed latency budget opens the door to real-time job history fetching rather than relying on the daily batch cache. Engineering to define what additional data is worth fetching live in SMS vs. voice.</li>
+      <li><span class="q-num">4</span>How does the endpoint handle a customer_id that's known mid-conversation (spouse on different phone)? This is the <code style="background:#f1f5f9;padding:1px 5px;border-radius:3px;">get_customer_context(customer_id)</code> tool call — a deliberate exception to the pre-load model. Documented in the Customer Context spec.</li>
+      <li><span class="q-num">5</span>What's the caching strategy for Pro near-static data? Cache invalidation on Pro settings change is straightforward — the bigger question is how to handle partial invalidation (hours change but services don't).</li>
+    </ul>
+  </div>
+
+  <!-- NEXT STEPS -->
+  <div class="section" style="background:#eff6ff;border:1px solid #bfdbfe;">
+    <div class="section-title" style="color:#1e3a8a;border-color:#bfdbfe;">✅ Next Steps</div>
+    <ul class="q-list">
+      <li><span class="q-num" style="color:#2563eb;">1</span><strong>Montrell + Eng:</strong> Review the three detailed specs (links above). For each field: mark available now / needs work / not feasible. Flag latency and caching concerns. This is the input needed to scope v1.</li>
+      <li><span class="q-num" style="color:#2563eb;">2</span><strong>Eng:</strong> Define the endpoint contract — what it accepts, what it returns, what the latency SLA is for voice vs. SMS. Architecture decision on how the three context layers (real-time / daily batch / near-static) are assembled and served.</li>
+      <li><span class="q-num" style="color:#2563eb;">3</span><strong>Garrett:</strong> Audit the current Vapi session — identify every tool call fired during a typical call that could be eliminated by pre-loaded context. That list is the ROI case for v1 scope.</li>
+      <li><span class="q-num" style="color:#2563eb;">4</span><strong>Chris + Garrett + Montrell:</strong> Agree on v1 minimum viable context — the smallest payload that meaningfully reduces mid-call tool calls and improves call quality. Ship narrow, measure dead air reduction, iterate.</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;padding:20px 0 8px;font-size:11px;color:#94a3b8;">
+    HCP AI · Context Architecture Overview · Chris Kosednar → Montrell Williams · 2026-03-17<br>
+    <span style="margin-top:4px;display:block;">Research sources: Google Research/ICLR 2025 · Stanford/MIT 2024 · Glean Engineering 2024 · Daily.co · AssemblyAI · Vapi · Hamming AI · Avoca AI</span>
+  </div>
+
+</div>
+</body>
+</html>

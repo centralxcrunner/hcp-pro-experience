@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSR AI — A/B Test Dashboard Mockup</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; }
+  .header { background: #1a1d2e; border-bottom: 1px solid #2d3148; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 18px; font-weight: 700; color: #fff; }
+  .header p { font-size: 12px; color: #64748b; margin-top: 3px; }
+  .legend-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+  .pill-control { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  .pill-variant { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
+  .legend-row { display: flex; gap: 10px; align-items: center; }
+
+  .note-banner { background: #1e1b4b; border: 1px solid #3730a3; border-radius: 8px; padding: 12px 20px; margin: 20px 24px 0; font-size: 13px; color: #a5b4fc; line-height: 1.6; }
+  .note-banner strong { color: #c7d2fe; }
+
+  .container { padding: 20px 24px; }
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #475569; margin-bottom: 12px; margin-top: 8px; }
+
+  /* Stat cards */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: #1a1d2e; border: 1px solid #2d3148; border-radius: 10px; padding: 16px 20px; }
+  .stat-card .label { font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
+  .stat-split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-val { text-align: center; }
+  .stat-val .num { font-size: 28px; font-weight: 800; line-height: 1; }
+  .stat-val .sublabel { font-size: 10px; font-weight: 600; margin-top: 4px; }
+  .control-color { color: #60a5fa; }
+  .variant-color { color: #fb923c; }
+  .stat-divider { width: 1px; background: #2d3148; }
+  .delta-badge { text-align: center; margin-top: 10px; font-size: 11px; }
+  .delta-pos { color: #34d399; }
+  .delta-neg { color: #f87171; }
+  .delta-neu { color: #94a3b8; }
+
+  /* Chart cards */
+  .charts-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .charts-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .chart-card { background: #1a1d2e; border: 1px solid #2d3148; border-radius: 10px; padding: 16px 20px; }
+  .chart-card .title { font-size: 12px; font-weight: 600; color: #94a3b8; margin-bottom: 14px; }
+  .chart-card .subtitle { font-size: 11px; color: #475569; margin-top: -10px; margin-bottom: 12px; }
+  canvas { max-width: 100%; }
+
+  .annotation { background: #0f2a1a; border: 1px solid #166534; border-radius: 6px; padding: 8px 12px; font-size: 11px; color: #86efac; margin-top: 10px; line-height: 1.5; }
+  .annotation.warn { background: #2a1a0f; border-color: #92400e; color: #fcd34d; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>CSR AI — A/B Test Dashboard</h1>
+    <p>Variant comparison · Call-level experiment · Mar 1–14, 2026 · Mockup for Matt</p>
+  </div>
+  <div class="legend-row">
+    <span class="legend-pill pill-control">● Control (current prompt)</span>
+    <span class="legend-pill pill-variant">● Variant (disclosure)</span>
+  </div>
+</div>
+
+<div class="note-banner">
+  <strong>What I need from you, Matt:</strong> The main CSR AI Business Metrics dashboard is great — I just need the same key charts filtered/overlaid by A/B variant. The experiment is at the <strong>call level</strong>, so org-level charts won't apply. Focus on the <strong>5 charts below</strong> — these are the ones that matter for evaluating whether the variant is working. Each chart should show both Control and Variant on the same axis so I can compare directly.
+</div>
+
+<div class="container">
+
+  <div class="section-label">Chart 1 of 5 — Hero: Conversion rates side by side</div>
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <div class="label">Booking Conversion Rate</div>
+      <div class="stat-split">
+        <div class="stat-val"><div class="num control-color">18.2%</div><div class="sublabel control-color">Control</div></div>
+        <div class="stat-divider"></div>
+        <div class="stat-val"><div class="num variant-color">16.8%</div><div class="sublabel variant-color">Variant</div></div>
+      </div>
+      <div class="delta-badge delta-neg">▼ 1.4pp — monitor closely</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="label">Intent to Book Conversion</div>
+      <div class="stat-split">
+        <div class="stat-val"><div class="num control-color">41.3%</div><div class="sublabel control-color">Control</div></div>
+        <div class="stat-divider"></div>
+        <div class="stat-val"><div class="num variant-color">42.1%</div><div class="sublabel variant-color">Variant</div></div>
+      </div>
+      <div class="delta-badge delta-pos">▲ 0.8pp</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="label">Total Calls Booked</div>
+      <div class="stat-split">
+        <div class="stat-val"><div class="num control-color">22,088</div><div class="sublabel control-color">Control</div></div>
+        <div class="stat-divider"></div>
+        <div class="stat-val"><div class="num variant-color">2,454</div><div class="sublabel variant-color">Variant</div></div>
+      </div>
+      <div class="delta-badge delta-neu">Split 90 / 10%</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="label">After Hours Booking Rate</div>
+      <div class="stat-split">
+        <div class="stat-val"><div class="num control-color">22.1%</div><div class="sublabel control-color">Control</div></div>
+        <div class="stat-divider"></div>
+        <div class="stat-val"><div class="num variant-color">21.2%</div><div class="sublabel variant-color">Variant</div></div>
+      </div>
+      <div class="delta-badge delta-neu">▼ 0.9pp — within noise</div>
+    </div>
+
+  </div>
+
+  <div class="section-label">Charts 2–3 — Conversion over time (overlaid by variant)</div>
+  <div class="charts-grid-2">
+
+    <div class="chart-card">
+      <div class="title">Booking Conversion Rate — Control vs. Variant (weekly)</div>
+      <div class="subtitle">This is the primary metric. Show both lines on the same chart.</div>
+      <canvas id="conversionChart" height="120"></canvas>
+      <div class="annotation">✅ This is what I need most. Same chart as the main dash — just add the variant line in orange alongside the blue control line.</div>
+    </div>
+
+    <div class="chart-card">
+      <div class="title">Convertible Calls w/ Intent to Book — Control vs. Variant (weekly)</div>
+      <div class="subtitle">Secondary conversion metric — already on main dash, needs variant overlay.</div>
+      <canvas id="intentChart" height="120"></canvas>
+      <div class="annotation">✅ Same structure — two lines, same axis, different colors.</div>
+    </div>
+
+  </div>
+
+  <div class="section-label">Charts 4–5 — Volume and caller mix by variant</div>
+  <div class="charts-grid-3">
+
+    <div class="chart-card">
+      <div class="title">Call Volume by Variant — weekly</div>
+      <div class="subtitle">Just need to see that the split is roughly even week over week.</div>
+      <canvas id="volumeChart" height="140"></canvas>
+      <div class="annotation">✅ Grouped bar — control and variant side by side each week.</div>
+    </div>
+
+    <div class="chart-card">
+      <div class="title">New vs. Existing Caller — by variant</div>
+      <div class="subtitle">Check that caller mix is balanced across control vs. variant.</div>
+      <canvas id="callerMixChart" height="140"></canvas>
+      <div class="annotation">✅ Grouped or stacked — just needs to confirm the split is clean and not skewed.</div>
+    </div>
+
+    <div class="chart-card">
+      <div class="title">Calls Booked by Hour of Day — Control vs. Variant</div>
+      <div class="subtitle">Looking for any time-of-day difference in booking behavior.</div>
+      <canvas id="hourChart" height="140"></canvas>
+      <div class="annotation warn">⚠️ Lower priority — skip if the first 4 are hard. Nice to have.</div>
+    </div>
+
+  </div>
+
+  <div style="background:#1a1d2e;border:1px solid #2d3148;border-radius:10px;padding:20px 24px;margin-top:8px;">
+    <div class="section-label" style="margin:0 0 12px;">Charts to skip at variant level (Matt flagged these — agreed)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:#64748b;">
+      <div>❌ Number of Orgs with Features — experiment is call-level, not org-level</div>
+      <div>❌ Number of Orgs with Booking Features — same reason</div>
+      <div>❌ CSR Features by Org — same reason</div>
+      <div>❌ Contact Reasons when Transferred — too granular, too noisy for A/B comparison</div>
+      <div>❌ Chat Volume — no data yet</div>
+      <div>❌ Active Orgs by Type — not applicable to call-level experiment</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const weeks = ['Mar 1','Mar 3','Mar 5','Mar 7','Mar 9','Mar 11','Mar 13'];
+const ctrl = { border: '#60a5fa', bg: 'rgba(96,165,250,0.15)' };
+const vari = { border: '#fb923c', bg: 'rgba(251,146,60,0.15)' };
+Chart.defaults.color = '#64748b';
+Chart.defaults.borderColor = '#1e2235';
+
+// Chart 1 - Booking conversion
+new Chart(document.getElementById('conversionChart'), {
+  type: 'line',
+  data: {
+    labels: weeks,
+    datasets: [
+      { label: 'Control', data: [17.8,18.4,18.1,18.6,18.0,18.3,18.2], borderColor: ctrl.border, backgroundColor: ctrl.bg, tension: 0.4, fill: true, pointRadius: 3 },
+      { label: 'Variant', data: [17.2,17.0,16.9,17.1,16.5,16.8,16.8], borderColor: vari.border, backgroundColor: vari.bg, tension: 0.4, fill: true, pointRadius: 3 }
+    ]
+  },
+  options: { plugins: { legend: { labels: { font: { size: 11 }, boxWidth: 10 } } }, scales: { y: { ticks: { callback: v => v + '%' }, grid: { color: '#1e2235' } }, x: { grid: { color: '#1e2235' } } } }
+});
+
+// Chart 2 - Intent conversion
+new Chart(document.getElementById('intentChart'), {
+  type: 'line',
+  data: {
+    labels: weeks,
+    datasets: [
+      { label: 'Control', data: [40.1,41.5,41.8,42.0,40.9,41.7,41.3], borderColor: ctrl.border, backgroundColor: ctrl.bg, tension: 0.4, fill: true, pointRadius: 3 },
+      { label: 'Variant', data: [40.5,42.0,42.3,42.8,41.9,42.0,42.1], borderColor: vari.border, backgroundColor: vari.bg, tension: 0.4, fill: true, pointRadius: 3 }
+    ]
+  },
+  options: { plugins: { legend: { labels: { font: { size: 11 }, boxWidth: 10 } } }, scales: { y: { ticks: { callback: v => v + '%' }, grid: { color: '#1e2235' } }, x: { grid: { color: '#1e2235' } } } }
+});
+
+// Chart 3 - Volume
+new Chart(document.getElementById('volumeChart'), {
+  type: 'bar',
+  data: {
+    labels: weeks,
+    datasets: [
+      { label: 'Control', data: [1820,1950,1880,2010,1790,1870,1920], backgroundColor: ctrl.border },
+      { label: 'Variant', data: [200,215,210,225,200,208,213], backgroundColor: vari.border }
+    ]
+  },
+  options: { plugins: { legend: { labels: { font: { size: 11 }, boxWidth: 10 } } }, scales: { y: { grid: { color: '#1e2235' } }, x: { grid: { color: '#1e2235' } } } }
+});
+
+// Chart 4 - Caller mix
+new Chart(document.getElementById('callerMixChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Control', 'Variant'],
+    datasets: [
+      { label: 'Existing Customer', data: [62, 63], backgroundColor: '#60a5fa' },
+      { label: 'New Customer', data: [38, 37], backgroundColor: '#34d399' }
+    ]
+  },
+  options: { indexAxis: 'y', plugins: { legend: { labels: { font: { size: 11 }, boxWidth: 10 } } }, scales: { x: { stacked: true, ticks: { callback: v => v + '%' }, grid: { color: '#1e2235' } }, y: { stacked: true, grid: { color: '#1e2235' } } } }
+});
+
+// Chart 5 - Hour of day
+const hours = ['6a','7a','8a','9a','10a','11a','12p','1p','2p','3p','4p','5p','6p','7p','8p'];
+new Chart(document.getElementById('hourChart'), {
+  type: 'bar',
+  data: {
+    labels: hours,
+    datasets: [
+      { label: 'Control', data: [120,280,510,820,910,870,760,800,850,820,780,690,540,310,140], backgroundColor: ctrl.border },
+      { label: 'Variant', data: [13,31,57,91,101,97,84,89,94,91,87,77,60,34,16], backgroundColor: vari.border }
+    ]
+  },
+  options: { plugins: { legend: { labels: { font: { size: 11 }, boxWidth: 10 } } }, scales: { y: { grid: { color: '#1e2235' } }, x: { grid: { color: '#1e2235' } } } }
+});
+</script>
+</body>
+</html>

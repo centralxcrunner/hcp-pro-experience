@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCP AI-First New Pro Experience</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #f8fafc; color: #1e293b;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+  }
+
+  /* Side Nav */
+  .sidenav {
+    position: fixed; left: 0; top: 50%; transform: translateY(-50%);
+    width: 190px; padding: 1rem 0.5rem; z-index: 100;
+  }
+  .sidenav a {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 0.6rem; margin-bottom: 0.1rem;
+    font-size: 0.68rem; font-weight: 600; color: #94a3b8;
+    text-decoration: none; border-radius: 6px;
+    transition: all 0.2s; border-left: 2px solid transparent;
+  }
+  .sidenav a:hover { color: #1e293b; background: #f1f5f9; }
+  .sidenav a.active { color: #2563eb; background: #eff6ff; border-left-color: #2563eb; font-weight: 700; }
+  .sidenav .nav-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  .main-content { margin-left: 190px; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 2rem 2.5rem; }
+
+  /* Hero */
+  .hero { text-align: center; padding: 3rem 2rem 2rem; }
+  .hero h1 { font-size: 3.2rem; font-weight: 800; margin-bottom: 0.75rem; color: #0f172a; letter-spacing: -0.02em; }
+  .hero h1 span { color: #059669; }
+  .hero .sub { color: #475569; font-size: 1.35rem; max-width: 750px; margin: 0 auto 1.25rem; line-height: 1.6; }
+  .hero .badges { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; }
+  .hero .badge {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 999px;
+    padding: 0.5rem 1.25rem; font-size: 0.95rem; font-weight: 600; color: #334155;
+  }
+  .hero .badge.gr { border-color: #10b981; color: #059669; }
+  .hero .badge.bl { border-color: #3b82f6; color: #2563eb; }
+  .hero .badge.pu { border-color: #8b5cf6; color: #7c3aed; }
+
+  /* Flow connector */
+  .flow-arrow {
+    text-align: center; padding: 0.75rem 0; font-size: 1.5rem; color: #cbd5e1;
+  }
+  .flow-arrow.big { font-size: 2rem; color: #94a3b8; }
+
+  /* Section */
+  .section { padding: 2.5rem 0; }
+  .section-label {
+    font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em;
+    color: #2563eb; margin-bottom: 0.5rem;
+  }
+  .section-label.gr { color: #059669; }
+  .section-label.pu { color: #7c3aed; }
+  .section-label.rd { color: #dc2626; }
+  .section-label.pk { color: #db2777; }
+  .section-label.cy { color: #0891b2; }
+  .section-label.am { color: #d97706; }
+  .section-title { font-size: 1.85rem; font-weight: 700; margin-bottom: 0.5rem; color: #0f172a; letter-spacing: -0.01em; }
+  .section-desc { color: #475569; font-size: 1.1rem; margin-bottom: 1.5rem; max-width: 750px; line-height: 1.6; }
+
+  /* Flow node card */
+  .flow-node {
+    background: #fff; border: 2px solid #e2e8f0; border-radius: 16px;
+    padding: 1.75rem; text-align: center; position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .flow-node.highlight { border-color: #3b82f6; box-shadow: 0 4px 16px rgba(59,130,246,0.15); }
+  .flow-node.highlight-green { border-color: #10b981; box-shadow: 0 4px 16px rgba(16,185,129,0.15); }
+  .flow-node h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem; }
+  .flow-node p { font-size: 0.85rem; color: #64748b; }
+  .flow-node .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+  /* Parallel container */
+  .parallel-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+    position: relative;
+  }
+  .parallel-label {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: #eff6ff; border: 1px solid #3b82f6; border-radius: 999px;
+    padding: 0.2rem 0.75rem; font-size: 0.65rem; font-weight: 700; color: #2563eb;
+    z-index: 1; white-space: nowrap;
+  }
+
+  /* Branch flow */
+  .branch-container {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;
+  }
+  .branch-card {
+    background: #fff; border: 2px solid #e2e8f0; border-radius: 14px;
+    padding: 1.25rem; text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: transform 0.2s;
+  }
+  .branch-card:hover { transform: translateY(-2px); }
+  .branch-card .icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .branch-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .branch-card p { font-size: 0.78rem; color: #64748b; }
+  .branch-card .route {
+    margin-top: 0.6rem; padding: 0.35rem 0.6rem; border-radius: 6px;
+    font-size: 0.7rem; font-weight: 700; display: inline-block;
+  }
+  .branch-card.call { border-color: #ef4444; }
+  .branch-card.call .route { background: #fef2f2; color: #dc2626; }
+  .branch-card.web { border-color: #3b82f6; }
+  .branch-card.web .route { background: #eff6ff; color: #2563eb; }
+  .branch-card.book { border-color: #10b981; }
+  .branch-card.book .route { background: #ecfdf5; color: #059669; }
+
+  /* Converge arrow */
+  .converge {
+    text-align: center; padding: 1rem 0;
+  }
+  .converge-label {
+    display: inline-block; background: #dc2626; color: #fff;
+    padding: 0.5rem 1.5rem; border-radius: 12px;
+    font-size: 0.9rem; font-weight: 800;
+  }
+
+  /* Metric tile */
+  .metric-tile {
+    display: inline-flex; align-items: center; gap: 0.75rem;
+    background: #fff; border: 2px solid #e2e8f0; border-radius: 12px;
+    padding: 0.85rem 1.25rem; margin: 0.5rem 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .metric-tile .num { font-size: 1.3rem; font-weight: 800; }
+  .metric-tile .num.gr { color: #059669; }
+  .metric-tile .num.bl { color: #2563eb; }
+  .metric-tile .num.pu { color: #7c3aed; }
+  .metric-tile .num.rd { color: #dc2626; }
+  .metric-tile .label { font-size: 0.85rem; color: #64748b; }
+  .metric-tile .label strong { color: #1e293b; }
+
+  /* Photo strip */
+  .photo-strip {
+    display: flex; gap: 0.5rem; margin: 1rem 0; border-radius: 12px; overflow: hidden;
+  }
+  .photo-strip img {
+    flex: 1; height: 160px; object-fit: cover; border-radius: 8px;
+  }
+
+  /* Side by side */
+  .side { display: flex; gap: 2rem; align-items: flex-start; }
+  .side .left { flex-shrink: 0; }
+  .side .right { flex: 1; padding-top: 0.5rem; }
+
+  /* Annotation */
+  .ann {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 0.85rem 1rem; margin-bottom: 0.6rem; position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .ann::before {
+    content: ''; position: absolute; left: -14px; top: 50%; transform: translateY(-50%);
+    border: 7px solid transparent; border-right-color: #e2e8f0;
+  }
+  .ann h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; color: #0f172a; }
+  .ann p { font-size: 0.9rem; color: #64748b; line-height: 1.5; }
+  .ann.gr { border-left: 3px solid #10b981; }
+  .ann.bl { border-left: 3px solid #3b82f6; }
+  .ann.pu { border-left: 3px solid #8b5cf6; }
+  .ann.rd { border-left: 3px solid #ef4444; }
+  .ann.am { border-left: 3px solid #f59e0b; }
+
+  /* SMS */
+  .sms-container { width: 320px; margin: 0 auto; }
+  .sms-thread {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .sms-header {
+    text-align: center; font-size: 0.75rem; color: #64748b; margin-bottom: 0.75rem;
+    padding-bottom: 0.6rem; border-bottom: 1px solid #e2e8f0;
+  }
+  .sms-header strong { color: #0f172a; font-size: 0.85rem; display: block; }
+  .msg {
+    max-width: 85%; padding: 0.6rem 0.8rem; border-radius: 14px;
+    margin-bottom: 0.4rem; font-size: 0.78rem; line-height: 1.5; clear: both;
+  }
+  .msg.ai { background: #e2e8f0; color: #1e293b; float: left; border-bottom-left-radius: 4px; }
+  .msg.cust { background: #3b82f6; color: #fff; float: right; border-bottom-right-radius: 4px; }
+  .msg.photo {
+    background: #3b82f6; color: #fff; float: right; border-bottom-right-radius: 4px;
+    padding: 0.4rem;
+  }
+  .msg.photo img { width: 100%; border-radius: 10px; display: block; }
+  .msg.photo .caption { font-size: 0.7rem; padding: 0.3rem 0.4rem 0; }
+  .msg-clear { clear: both; }
+  .msg-time {
+    clear: both; text-align: center; font-size: 0.6rem;
+    color: #94a3b8; margin: 0.6rem 0 0.4rem;
+  }
+
+  /* Pre-job SMS notifications */
+  .sms-updates {
+    width: 320px; margin: 0 auto;
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .sms-update-header {
+    text-align: center; padding-bottom: 0.6rem; border-bottom: 1px solid #e2e8f0; margin-bottom: 0.6rem;
+  }
+  .sms-update-header strong { color: #0f172a; font-size: 0.85rem; }
+  .sms-update-header .sub { font-size: 0.65rem; color: #64748b; }
+  .notif {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 0.7rem 0.85rem; margin-bottom: 0.4rem;
+  }
+  .notif-time { font-size: 0.6rem; color: #94a3b8; }
+  .notif-text { font-size: 0.78rem; margin-top: 0.15rem; color: #334155; }
+  .notif-text strong { color: #059669; }
+  .notif-photo {
+    background: #eff6ff; border: 1px solid #3b82f6; border-radius: 10px;
+    padding: 0.7rem 0.85rem; margin-bottom: 0.4rem;
+  }
+  .notif-photo img { width: 100%; border-radius: 8px; margin-top: 0.4rem; }
+
+  /* Audit grid */
+  .audit-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-top: 0.75rem;
+  }
+  .audit-item {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 0.85rem; display: flex; align-items: flex-start; gap: 0.6rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .audit-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .audit-icon.gr { background: #d1fae5; }
+  .audit-icon.rd { background: #fee2e2; }
+  .audit-icon.am { background: #fef3c7; }
+  .audit-detail h5 { font-size: 0.8rem; font-weight: 700; color: #0f172a; }
+  .audit-detail p { font-size: 0.7rem; color: #64748b; }
+
+  /* Key Results grid */
+  .kr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-top: 1rem; }
+  .kr {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 1rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .kr .metric { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.4rem; font-weight: 700; }
+  .kr .current { font-size: 1rem; color: #94a3b8; font-weight: 600; }
+  .kr .goal { font-size: 1.5rem; font-weight: 800; }
+  .kr .goal.gr { color: #059669; }
+  .kr .goal.bl { color: #2563eb; }
+  .kr .goal.pu { color: #7c3aed; }
+  .kr .goal.am { color: #d97706; }
+  .kr .goal.rd { color: #dc2626; }
+  .kr .target { font-size: 0.65rem; color: #94a3b8; margin-top: 0.2rem; }
+
+  /* Aside card */
+  .aside-card {
+    background: #fff; border: 1px solid #e2e8f0; border-left: 4px solid #ef4444;
+    border-radius: 12px; padding: 1.25rem 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  /* Bottom */
+  .bottom-cta {
+    text-align: center; padding: 2rem; margin-top: 1rem;
+    border-top: 2px solid #e2e8f0;
+  }
+  .bottom-cta h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem; color: #0f172a; }
+  .bottom-cta h2 span { color: #059669; }
+  .bottom-cta p { color: #475569; font-size: 1.1rem; max-width: 650px; margin: 0 auto; line-height: 1.7; }
+
+  /* Highlight ring animation */
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(59,130,246,0.5); } 70% { box-shadow: 0 0 0 8px rgba(59,130,246,0); } 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); } }
+  @keyframes pulse-green { 0% { box-shadow: 0 0 0 3px rgba(16,185,129,0.3); } 70% { box-shadow: 0 0 0 10px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 3px rgba(16,185,129,0.3); } }
+  @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); } 70% { box-shadow: 0 0 0 8px rgba(239,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
+
+  /* Phone mockup */
+  .phone {
+    width: 300px; min-height: 540px;
+    background: #000; border-radius: 32px; padding: 10px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    position: relative; margin: 0 auto;
+  }
+  .phone-screen {
+    background: #fff; border-radius: 24px; overflow: hidden;
+    min-height: 520px; position: relative;
+  }
+  .phone-notch {
+    width: 100px; height: 24px; background: #000; border-radius: 0 0 14px 14px;
+    margin: 0 auto; position: relative; z-index: 2;
+  }
+
+  /* Website mockup inside phone */
+  .web-header {
+    background: linear-gradient(135deg, #1a365d 0%, #2d3748 100%);
+    padding: 1.25rem 1rem; text-align: center; color: #fff;
+  }
+  .web-header .logo { font-size: 1.2rem; font-weight: 800; }
+  .web-header .logo span { color: #f59e0b; }
+  .web-header .tagline { font-size: 0.7rem; color: #cbd5e1; margin-top: 0.1rem; }
+  .web-cta {
+    display: block; margin: 0.75rem 1rem 0; padding: 0.75rem;
+    background: #10b981; color: #fff; text-align: center;
+    border-radius: 10px; font-size: 1rem; font-weight: 800;
+    text-decoration: none;
+  }
+  .web-cta-sub { text-align: center; font-size: 0.65rem; color: #64748b; margin-top: 0.3rem; }
+  .web-services { padding: 0.75rem 1rem; }
+  .web-services h3 { font-size: 0.8rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem; }
+  .web-svc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+  .web-svc {
+    background: #f1f5f9; border-radius: 6px; padding: 0.5rem; text-align: center;
+    font-size: 0.68rem; color: #334155; font-weight: 600;
+  }
+  .web-svc .icon { font-size: 1rem; display: block; margin-bottom: 0.1rem; }
+  .web-book {
+    display: block; margin: 0.5rem 1rem; padding: 0.6rem;
+    background: #3b82f6; color: #fff; text-align: center;
+    border-radius: 8px; font-size: 0.85rem; font-weight: 700;
+    text-decoration: none;
+  }
+  .web-trust { padding: 0.6rem 1rem; text-align: center; border-top: 1px solid #e2e8f0; }
+  .web-trust .stars { color: #f59e0b; font-size: 0.9rem; }
+  .web-trust .text { font-size: 0.65rem; color: #64748b; }
+  .web-footer { background: #334155; padding: 0.6rem 1rem; text-align: center; font-size: 0.6rem; color: #94a3b8; }
+
+  @media (max-width: 1000px) {
+    .sidenav { display: none; }
+    .main-content { margin-left: 0; }
+  }
+  @media (max-width: 800px) {
+    .side { flex-direction: column; align-items: center; }
+    .ann::before { display: none; }
+    .parallel-row, .audit-grid, .kr-grid, .branch-container { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Side Nav -->
+<nav class="sidenav" id="sidenav">
+  <a href="#hero"><div class="nav-dot" style="background:#2563eb;"></div>Overview</a>
+  <a href="#google-search"><div class="nav-dot" style="background:#4285f4;"></div>Google Search</a>
+  <a href="#at-signup"><div class="nav-dot" style="background:#059669;"></div>At Signup</a>
+  <a href="#gbp-result"><div class="nav-dot" style="background:#7c3aed;"></div>The GBP</a>
+  <a href="#three-paths"><div class="nav-dot" style="background:#dc2626;"></div>3 Paths → CSR AI</a>
+  <a href="#csrai"><div class="nav-dot" style="background:#dc2626;"></div>CSR AI Call</a>
+  <a href="#pre-job"><div class="nav-dot" style="background:#0891b2;"></div>Pre-Job SMS</a>
+  <a href="#no-show"><div class="nav-dot" style="background:#ef4444;"></div>No-Show Loop</a>
+  <a href="#post-job"><div class="nav-dot" style="background:#db2777;"></div>Post-Job</a>
+  <a href="#retention"><div class="nav-dot" style="background:#7c3aed;"></div>Retention Loop</a>
+  <a href="#results"><div class="nav-dot" style="background:#2563eb;"></div>Key Results</a>
+</nav>
+
+<div class="main-content">
+<div class="container">
+
+<!-- ===== HERO ===== -->
+<div class="hero" id="hero">
+  <h1>The <span>AI-First</span> Pro Experience</h1>
+  <div class="sub">
+    Don't generate new demand. <strong>Convert the latent demand that's already there.</strong>
+  </div>
+  <div style="max-width:720px;margin:0.75rem auto 0;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:1.1rem 1.5rem;text-align:left;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+    <div style="font-size:0.88rem;color:#1e293b;line-height:1.7;">
+      When a pro signs up, HCP <strong>provisions and optimizes every demand surface they already have</strong> — website, Google Business Profile, phone, online booking — so that the traffic they're already getting converts at the highest possible rate. <strong>Zero additional spend from the pro.</strong>
+    </div>
+    <div style="margin-top:0.6rem;font-size:0.85rem;color:#475569;line-height:1.7;border-top:1px solid #e2e8f0;padding-top:0.6rem;">
+      The goal: build a <strong style="color:#059669;">super tight conversion funnel</strong> first. When the pro's business grows and they're ready to spend on generating traffic, they get massive ROI because every dollar hits a funnel that actually converts.
+    </div>
+  </div>
+  <div class="badges">
+    <div class="badge gr">Target: End of Q2 2026</div>
+    <div class="badge bl">~4,000 new pros/month</div>
+    <div class="badge pu">100% AI-powered</div>
+  </div>
+
+  <!-- Top metric recap -->
+  <div style="margin-top:1.5rem;">
+    <div style="font-size:0.7rem;text-transform:uppercase;font-weight:700;color:#94a3b8;letter-spacing:0.08em;margin-bottom:0.5rem;">Key Targets</div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.5rem;">
+      <div class="metric-tile"><div><div class="num gr">25%</div><div class="label">Website Attach</div></div></div>
+      <div class="metric-tile"><div><div class="num pu">50%</div><div class="label">Google Auth</div></div></div>
+      <div class="metric-tile"><div><div class="num bl">15%</div><div class="label">OLB Conversion</div></div></div>
+      <div class="metric-tile"><div><div class="num gr">80%</div><div class="label">CSR AI Booking</div></div></div>
+      <div class="metric-tile"><div><div class="num rd">50%</div><div class="label">Review Rate</div></div></div>
+      <div class="metric-tile"><div><div class="num gr">10%</div><div class="label">Customer Rebook</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STARTING POINT: GOOGLE SEARCH ===== -->
+<div class="section" id="google-search">
+  <div style="text-align:center;">
+    <div class="section-label" style="color:#4285f4;">The Starting Point</div>
+    <div class="section-title">A Homeowner Searches Google</div>
+    <div class="section-desc" style="margin:0 auto 1.5rem;">
+      This demand already exists. The question is: does the pro's Google presence convert it?
+    </div>
+
+    <!-- Google search bar -->
+    <div style="display:inline-block;background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:0.85rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.08);text-align:left;width:500px;max-width:100%;margin-bottom:2rem;">
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <span style="font-size:1.2rem;">🔍</span>
+        <span style="font-size:1rem;color:#202124;font-weight:500;">hvac repair near me phoenix az</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Without vs With HCP — actual GBP cards -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;">
+
+    <!-- ===== WITHOUT HCP — sad GBP ===== -->
+    <div>
+      <div style="text-align:center;margin-bottom:0.75rem;">
+        <span style="background:#fef2f2;border:1px solid #fca5a5;border-radius:999px;padding:0.35rem 1rem;font-size:0.75rem;font-weight:800;color:#dc2626;">❌ Without HCP</span>
+      </div>
+      <div style="width:100%;max-width:370px;margin:0 auto;background:#202124;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.3);color:#e8eaed;font-family:'Google Sans',Roboto,-apple-system,sans-serif;border:2px solid #ef4444;">
+
+        <!-- Top: no real photo, just a gray placeholder + map -->
+        <div style="display:flex;height:150px;">
+          <div style="flex:1;background:#303134;display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;color:#80868b;">
+              <div style="font-size:2.5rem;opacity:0.4;">📷</div>
+              <div style="font-size:0.65rem;margin-top:0.2rem;">No photos</div>
+            </div>
+          </div>
+          <div style="flex:1;background:#1a1f1a;border-left:2px solid #202124;display:flex;align-items:center;justify-content:center;">
+            <div style="width:18px;height:24px;"><div style="width:18px;height:18px;background:#ea4335;border-radius:50% 50% 50% 0;transform:rotate(-45deg);"></div></div>
+          </div>
+        </div>
+
+        <!-- Business name -->
+        <div style="padding:0.85rem 1rem 0;">
+          <div style="font-size:1.15rem;font-weight:400;color:#e8eaed;">Mike's HVAC Service</div>
+        </div>
+
+        <!-- Rating — poor -->
+        <div style="padding:0.3rem 1rem 0;display:flex;align-items:center;gap:0.35rem;">
+          <span style="font-size:0.8rem;color:#e8eaed;">3.2</span>
+          <span style="color:#fdd663;font-size:0.75rem;">★★★<span style="color:#80868b;">★★</span></span>
+          <span style="font-size:0.8rem;color:#8ab4f8;">3 Google reviews</span>
+        </div>
+
+        <!-- Category -->
+        <div style="padding:0.1rem 1rem 0.6rem;">
+          <span style="font-size:0.8rem;color:#9aa0a6;">HVAC contractor in Phoenix, Arizona</span>
+        </div>
+
+        <!-- Buttons: Website (missing) and Call -->
+        <div style="display:flex;gap:0.5rem;padding:0 1rem;margin-bottom:0.6rem;">
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.5rem 0;background:#394457;border-radius:999px;opacity:0.5;">
+            <span style="font-size:0.8rem;">🌐</span>
+            <span style="font-size:0.75rem;color:#80868b;font-weight:500;text-decoration:line-through;">Website</span>
+          </div>
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.5rem 0;background:#394457;border-radius:999px;">
+            <span style="font-size:0.8rem;">📞</span>
+            <span style="font-size:0.75rem;color:#d2e3fc;font-weight:500;">Call</span>
+          </div>
+        </div>
+
+        <!-- No book online -->
+        <div style="padding:0 1rem 0.85rem;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.6rem 0;background:#303134;border-radius:999px;border:1px dashed #5f6368;opacity:0.4;">
+            <span style="font-size:0.8rem;">🗓</span>
+            <span style="font-size:0.8rem;color:#80868b;font-weight:500;">Book online unavailable</span>
+          </div>
+        </div>
+
+        <!-- Outcome bar -->
+        <div style="background:#7f1d1d;color:#fca5a5;text-align:center;padding:0.5rem;font-size:0.72rem;font-weight:700;">
+          📞 Calls → voicemail · 🌐 No website · 📅 No booking · Demand leaks
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== WITH HCP — great GBP ===== -->
+    <div>
+      <div style="text-align:center;margin-bottom:0.75rem;">
+        <span style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:999px;padding:0.35rem 1rem;font-size:0.75rem;font-weight:800;color:#059669;">✅ With HCP</span>
+      </div>
+      <div style="width:100%;max-width:370px;margin:0 auto;background:#202124;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.3);color:#e8eaed;font-family:'Google Sans',Roboto,-apple-system,sans-serif;border:2px solid #10b981;">
+
+        <!-- Top: Real photos + map -->
+        <div style="display:flex;height:150px;position:relative;">
+          <div style="flex:1;position:relative;overflow:hidden;">
+            <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=220&fit=crop" alt="HVAC technician" style="width:100%;height:100%;object-fit:cover;">
+            <div style="position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,0.7);color:#fff;font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:4px;">See photos</div>
+          </div>
+          <div style="flex:1;background:#1a1f1a;border-left:2px solid #202124;display:flex;align-items:center;justify-content:center;">
+            <div style="width:18px;height:24px;"><div style="width:18px;height:18px;background:#ea4335;border-radius:50% 50% 50% 0;transform:rotate(-45deg);"></div></div>
+          </div>
+        </div>
+
+        <!-- Business name -->
+        <div style="padding:0.85rem 1rem 0;">
+          <div style="font-size:1.15rem;font-weight:400;color:#e8eaed;">ComfortZone HVAC<br>Heating and Air</div>
+        </div>
+
+        <!-- Rating — great -->
+        <div style="padding:0.3rem 1rem 0;display:flex;align-items:center;gap:0.35rem;">
+          <span style="font-size:0.8rem;color:#e8eaed;">4.8</span>
+          <span style="color:#fdd663;font-size:0.75rem;">★★★★★</span>
+          <span style="font-size:0.8rem;color:#8ab4f8;">6,242 Google reviews</span>
+          <span style="color:#9aa0a6;font-size:0.75rem;margin-left:0.1rem;">⋮</span>
+        </div>
+
+        <!-- Category -->
+        <div style="padding:0.1rem 1rem 0.6rem;">
+          <span style="font-size:0.8rem;color:#9aa0a6;">HVAC contractor in Phoenix, Arizona</span>
+        </div>
+
+        <!-- Buttons: Website, Call -->
+        <div style="display:flex;gap:0.5rem;padding:0 1rem;margin-bottom:0.6rem;">
+          <div style="position:relative;flex:1;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:0.35rem;padding:0.5rem 0;background:#394457;border-radius:999px;border:2px solid #3b82f6;box-shadow:0 0 0 2px rgba(59,130,246,0.25);animation:pulse 2s infinite;">
+              <span style="font-size:0.8rem;">🌐</span>
+              <span style="font-size:0.75rem;color:#d2e3fc;font-weight:500;">Website</span>
+            </div>
+            <div style="position:absolute;top:-6px;right:-3px;background:#3b82f6;color:#fff;font-size:0.45rem;font-weight:800;padding:0.08rem 0.3rem;border-radius:3px;z-index:1;">HCP</div>
+          </div>
+          <div style="position:relative;flex:1;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:0.35rem;padding:0.5rem 0;background:#394457;border-radius:999px;border:2px solid #ef4444;box-shadow:0 0 0 2px rgba(239,68,68,0.25);animation:pulse-red 2s infinite;">
+              <span style="font-size:0.75rem;">📞</span>
+              <span style="font-size:0.75rem;color:#d2e3fc;font-weight:500;">Call</span>
+            </div>
+            <div style="position:absolute;top:-6px;right:-3px;background:#ef4444;color:#fff;font-size:0.45rem;font-weight:800;padding:0.08rem 0.3rem;border-radius:3px;z-index:1;">HCP</div>
+          </div>
+        </div>
+
+        <!-- Book online — solid blue pill like real GBP -->
+        <div style="padding:0 1rem 0.85rem;position:relative;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.65rem 0;background:#8ab4f8;border-radius:999px;border:2px solid #10b981;box-shadow:0 0 0 3px rgba(16,185,129,0.3);animation:pulse-green 2s infinite;">
+            <span style="font-size:0.8rem;">🗓</span>
+            <span style="font-size:0.8rem;color:#202124;font-weight:500;">Book online</span>
+          </div>
+          <div style="position:absolute;top:-2px;right:16px;background:#10b981;color:#fff;font-size:0.45rem;font-weight:800;padding:0.08rem 0.3rem;border-radius:3px;z-index:1;">HCP</div>
+        </div>
+
+        <!-- Recent update / post -->
+        <div style="padding:0 1rem 0.75rem;">
+          <div style="font-size:0.7rem;font-weight:500;color:#9aa0a6;margin-bottom:0.4rem;">Updates from this business</div>
+          <div style="background:#303134;border-radius:10px;overflow:hidden;">
+            <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=370&h=100&fit=crop" alt="AC diagnostic" style="width:100%;height:80px;object-fit:cover;">
+            <div style="padding:0.5rem 0.65rem;">
+              <div style="font-size:0.72rem;font-weight:500;color:#e8eaed;margin-bottom:0.15rem;">AC Diagnostic in Scottsdale ❄️</div>
+              <div style="font-size:0.65rem;color:#9aa0a6;line-height:1.4;">Completed a full system diagnostic for a homeowner in Scottsdale yesterday — cleaned the condenser coils and replaced a worn contactor. Running like new!</div>
+              <div style="font-size:0.6rem;color:#9aa0a6;margin-top:0.25rem;">1 day ago</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Outcome bar -->
+        <div style="background:#064e3b;color:#6ee7b7;text-align:center;padding:0.5rem;font-size:0.72rem;font-weight:700;">
+          📞 CSR AI 24/7 · 🌐 HCP site · 📅 Book online · Every path → HCP
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom summary -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:1rem;">
+    <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:0.65rem 1rem;text-align:center;font-size:0.82rem;font-weight:700;color:#dc2626;">
+      Latent demand → leaked everywhere
+    </div>
+    <div style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:10px;padding:0.65rem 1rem;text-align:center;font-size:0.82rem;font-weight:700;color:#059669;">
+      Latent demand → captured &amp; converted
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow big">⬇</div>
+
+<!-- ===== AT SIGNUP: PARALLEL PROVISIONING ===== -->
+<div class="section" id="at-signup">
+  <div style="text-align:center;margin-bottom:1.25rem;">
+    <div class="section-label gr">At Signup — Happens in Parallel</div>
+    <div class="section-title">HCP Provisions Everything the Pro Needs</div>
+    <div class="section-desc" style="margin:0 auto;">
+      When a pro signs up, two things happen simultaneously. Together they create a fully optimized Google presence.
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;position:relative;">
+    <div class="parallel-label">⚡ All happen at signup</div>
+
+    <!-- Website -->
+    <div class="flow-node highlight" style="text-align:left;">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+        <span style="font-size:1.5rem;">🌐</span>
+        <h3 style="margin:0;">Click-to-Call Website</h3>
+      </div>
+      <p style="margin-bottom:0.75rem;">~40% of new pros have no website. HCP generates a mobile-optimized, SEO-ready site instantly.</p>
+      <div class="metric-tile" style="margin:0;">
+        <div><div class="label"><strong>Website Attach Rate</strong></div><div style="display:flex;gap:0.75rem;align-items:baseline;"><span style="color:#94a3b8;font-size:0.8rem;">Now: ~0%</span><span class="num gr">→ 25%</span></div><div class="label">$25/mo per site</div></div>
+      </div>
+    </div>
+
+    <!-- VoIP + CSR AI -->
+    <div class="flow-node" style="text-align:left;border-color:#ef4444;box-shadow:0 4px 16px rgba(239,68,68,0.1);">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+        <span style="font-size:1.5rem;">📞</span>
+        <h3 style="margin:0;">VoIP + CSR AI</h3>
+      </div>
+      <p style="margin-bottom:0.75rem;">Every pro gets an HCP VoIP number. All inbound calls route to CSR AI — 24/7 answering, no missed calls, instant booking.</p>
+      <div class="metric-tile" style="margin:0;">
+        <div><div class="label"><strong>CSR AI Booking Rate</strong></div><div style="display:flex;gap:0.75rem;align-items:baseline;"><span style="color:#94a3b8;font-size:0.8rem;">Now: ~55%</span><span class="num rd">→ 80%</span></div><div class="label">Non-silent, new customers</div></div>
+      </div>
+    </div>
+
+    <!-- GBP Audit -->
+    <div class="flow-node highlight-green" style="text-align:left;">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+        <span style="font-size:1.5rem;">🔍</span>
+        <h3 style="margin:0;">GBP Audit & Optimization</h3>
+      </div>
+      <p style="margin-bottom:0.75rem;">Marketing AI scans their GBP and fixes gaps: adds website URL, swaps cell for VoIP, enables Book Online, adds hours and photos.</p>
+      <div class="metric-tile" style="margin:0;">
+        <div><div class="label"><strong>Google Auth %</strong></div><div style="display:flex;gap:0.75rem;align-items:baseline;"><span style="color:#94a3b8;font-size:0.8rem;">Now: ~30%</span><span class="num pu">→ 50%</span></div><div class="label">Grant GBP access in 30 days</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit details (collapsible feel) -->
+  <div style="margin-top:1.25rem;">
+    <div style="font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">What the GBP audit catches & fixes</div>
+    <div class="audit-grid">
+      <div class="audit-item">
+        <div class="audit-icon rd">✘</div>
+        <div class="audit-detail"><h5>No Website URL</h5><p><strong style="color:#10b981;">Fix:</strong> Set to HCP click-to-call site</p></div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon rd">✘</div>
+        <div class="audit-detail"><h5>Personal Cell on Profile</h5><p><strong style="color:#10b981;">Fix:</strong> Swap to VoIP (CSR AI 24/7)</p></div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon rd">✘</div>
+        <div class="audit-detail"><h5>Reserve with Google: OFF</h5><p><strong style="color:#10b981;">Fix:</strong> Enable via HCP integration</p></div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon am">⚠</div>
+        <div class="audit-detail"><h5>No Photos / Stale Profile</h5><p><strong style="color:#10b981;">Fix:</strong> AI auto-posts after each job</p></div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon am">⚠</div>
+        <div class="audit-detail"><h5>Incomplete Hours</h5><p><strong style="color:#10b981;">Fix:</strong> Add all hours, mark emergency</p></div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-icon am">⚠</div>
+        <div class="audit-detail"><h5>Only 3 Reviews</h5><p><strong style="color:#10b981;">Fix:</strong> AI review request after every job</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow big">⬇</div>
+<div style="text-align:center;margin-bottom:0.5rem;">
+  <span style="background:#eff6ff;border:1px solid #3b82f6;border-radius:8px;padding:0.4rem 1rem;font-size:0.8rem;font-weight:700;color:#2563eb;">These feed into a fully optimized GBP listing</span>
+</div>
+<div class="flow-arrow">⬇</div>
+
+<!-- ===== THE RESULT: OPTIMIZED GBP ===== -->
+<div class="section" id="gbp-result">
+  <div style="text-align:center;margin-bottom:1.25rem;">
+    <div class="section-label pu">The Result</div>
+    <div class="section-title">What the Homeowner Now Sees on Google</div>
+    <div class="section-desc" style="margin:0 auto;">
+      A polished, active, highly-reviewed profile. Every action the homeowner can take routes through HCP.
+    </div>
+  </div>
+
+  <div class="side">
+    <div class="left">
+      <!-- GBP Card — matching Google's exact layout -->
+      <div style="width:370px;background:#202124;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.3);color:#e8eaed;font-family:'Google Sans',Roboto,-apple-system,sans-serif;">
+
+        <!-- Top: Photo + Map side by side -->
+        <div style="display:flex;height:170px;position:relative;">
+          <div style="flex:1;position:relative;overflow:hidden;">
+            <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=250&fit=crop" alt="HVAC technician" style="width:100%;height:100%;object-fit:cover;">
+            <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.7);color:#fff;font-size:0.7rem;padding:0.2rem 0.6rem;border-radius:4px;font-weight:500;">See photos</div>
+          </div>
+          <div style="flex:1;background:#303134;position:relative;border-left:2px solid #202124;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#2d3a2d 0%,#3a4a3a 50%,#2d3a2d 100%);display:flex;align-items:center;justify-content:center;position:relative;">
+              <!-- Fake map -->
+              <div style="font-size:0.65rem;color:#9aa0a6;position:absolute;top:10px;right:10px;">78th St SW</div>
+              <div style="width:20px;height:28px;position:relative;">
+                <div style="width:20px;height:20px;background:#ea4335;border-radius:50% 50% 50% 0;transform:rotate(-45deg);"></div>
+              </div>
+              <div style="position:absolute;top:8px;right:8px;width:20px;height:20px;background:rgba(255,255,255,0.1);border-radius:4px;display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:0.6rem;color:#e8eaed;">↗</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business name -->
+        <div style="padding:1rem 1rem 0;">
+          <div style="font-size:1.25rem;font-weight:400;color:#e8eaed;line-height:1.3;">ComfortZone HVAC<br>Heating and Air</div>
+        </div>
+
+        <!-- Rating -->
+        <div style="padding:0.4rem 1rem 0;display:flex;align-items:center;gap:0.4rem;">
+          <span style="font-size:0.85rem;font-weight:400;color:#e8eaed;">4.8</span>
+          <span style="color:#fdd663;font-size:0.8rem;letter-spacing:1px;">★★★★★</span>
+          <span style="font-size:0.85rem;color:#d2e3fc;font-weight:400;">6,242 Google reviews</span>
+          <span style="color:#9aa0a6;font-size:0.8rem;margin-left:0.1rem;">⋮</span>
+        </div>
+
+        <!-- Category -->
+        <div style="padding:0.15rem 1rem 0.75rem;">
+          <span style="font-size:0.85rem;color:#9aa0a6;">HVAC contractor in Phoenix, Arizona</span>
+        </div>
+
+        <!-- Row 1: Website, Directions, Reviews — pill buttons -->
+        <div style="display:flex;gap:0.5rem;padding:0 1rem;margin-bottom:0.5rem;">
+          <!-- Website - HIGHLIGHTED -->
+          <div style="position:relative;flex:1;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.55rem 0;background:#394457;border-radius:999px;cursor:pointer;border:2px solid #3b82f6;box-shadow:0 0 0 2px rgba(59,130,246,0.3);animation:pulse 2s infinite;">
+              <span style="font-size:0.85rem;">🌐</span>
+              <span style="font-size:0.8rem;color:#d2e3fc;font-weight:500;">Website</span>
+            </div>
+            <div style="position:absolute;top:-7px;right:-4px;background:#3b82f6;color:#fff;font-size:0.5rem;font-weight:800;padding:0.1rem 0.35rem;border-radius:4px;z-index:1;">HCP</div>
+          </div>
+          <!-- Directions -->
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.55rem 0;background:#394457;border-radius:999px;">
+            <span style="font-size:0.85rem;">◆</span>
+            <span style="font-size:0.8rem;color:#d2e3fc;font-weight:500;">Directions</span>
+          </div>
+          <!-- Reviews -->
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.55rem 0;background:#394457;border-radius:999px;">
+            <span style="font-size:0.85rem;">⊡</span>
+            <span style="font-size:0.8rem;color:#d2e3fc;font-weight:500;">Reviews</span>
+          </div>
+        </div>
+
+        <!-- Row 2: Save, Share, Call — pill buttons -->
+        <div style="display:flex;gap:0.5rem;padding:0 1rem;margin-bottom:0.75rem;">
+          <!-- Save -->
+          <div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.55rem 0.9rem;background:#394457;border-radius:999px;">
+            <span style="font-size:0.8rem;">☐</span>
+            <span style="font-size:0.8rem;color:#d2e3fc;font-weight:500;">Save</span>
+          </div>
+          <!-- Share -->
+          <div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.55rem 0.9rem;background:#394457;border-radius:999px;">
+            <span style="font-size:0.8rem;">↗</span>
+            <span style="font-size:0.8rem;color:#d2e3fc;font-weight:500;">Share</span>
+          </div>
+          <!-- Call - HIGHLIGHTED -->
+          <div style="position:relative;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.55rem 0.9rem;background:#394457;border-radius:999px;border:2px solid #ef4444;box-shadow:0 0 0 2px rgba(239,68,68,0.3);animation:pulse-red 2s infinite;">
+              <span style="font-size:0.8rem;">📞</span>
+              <span style="font-size:0.8rem;color:#d2e3fc;font-weight:500;">Call</span>
+            </div>
+            <div style="position:absolute;top:-7px;right:-4px;background:#ef4444;color:#fff;font-size:0.5rem;font-weight:800;padding:0.1rem 0.35rem;border-radius:4px;z-index:1;">HCP</div>
+          </div>
+        </div>
+
+        <!-- Book online button — full width, blue pill -->
+        <div style="padding:0 1rem 1rem;position:relative;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.7rem 0;background:#8ab4f8;border-radius:999px;border:2px solid #10b981;box-shadow:0 0 0 3px rgba(16,185,129,0.3);animation:pulse-green 2s infinite;">
+            <span style="font-size:0.9rem;">🗓</span>
+            <span style="font-size:0.9rem;color:#202124;font-weight:500;">Book online</span>
+          </div>
+          <div style="position:absolute;top:-2px;right:16px;background:#10b981;color:#fff;font-size:0.5rem;font-weight:800;padding:0.1rem 0.35rem;border-radius:4px;z-index:1;">HCP</div>
+        </div>
+
+        <!-- HCP callout bar -->
+        <div style="background:#dc2626;color:#fff;text-align:center;padding:0.5rem;font-size:0.75rem;font-weight:700;">
+          Website, Call &amp; Book Online → All route through HCP
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="ann gr" style="margin-top:0;">
+        <h4>The thesis</h4>
+        <p>This homeowner was <strong>already searching</strong>. They already have intent. We didn't spend money to get them here. We just need this GBP to convert them &mdash; and now every path leads to HCP.</p>
+      </div>
+      <div class="ann rd">
+        <h4>No leakage</h4>
+        <p>Every possible action routes through HCP. There is no path that goes outside the system. The pro doesn't need to answer their phone, check their email, or manage their calendar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== THREE PATHS FLOWING DIAGRAM ===== -->
+<div class="section" id="three-paths" style="padding-top:1rem;">
+  <div style="text-align:center;margin-bottom:0.5rem;">
+    <div class="section-label rd">The Funnel</div>
+    <div class="section-title">3 Paths — All Lead to CSR AI</div>
+  </div>
+
+  <!-- SVG Flow Diagram -->
+  <div style="position:relative;width:100%;max-width:800px;margin:0 auto;">
+    <svg viewBox="0 0 800 430" style="width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#ef4444"/></marker>
+        <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#3b82f6"/></marker>
+        <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#10b981"/></marker>
+      </defs>
+
+      <!-- Top: 3 GBP action icons -->
+      <!-- Call -->
+      <circle cx="150" cy="40" r="28" fill="#fef2f2" stroke="#ef4444" stroke-width="2.5"/>
+      <text x="150" y="46" text-anchor="middle" font-size="22">📞</text>
+      <text x="150" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#ef4444">Taps "Call"</text>
+
+      <!-- Website -->
+      <circle cx="400" cy="40" r="28" fill="#eff6ff" stroke="#3b82f6" stroke-width="2.5"/>
+      <text x="400" y="46" text-anchor="middle" font-size="22">🌐</text>
+      <text x="400" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#3b82f6">Taps "Website"</text>
+
+      <!-- Book Online -->
+      <circle cx="650" cy="40" r="28" fill="#ecfdf5" stroke="#10b981" stroke-width="2.5"/>
+      <text x="650" y="46" text-anchor="middle" font-size="22">📅</text>
+      <text x="650" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#10b981">Taps "Book Online"</text>
+
+      <!-- Middle step boxes -->
+      <!-- Call path: direct -->
+      <rect x="70" y="120" width="160" height="50" rx="10" fill="#fff" stroke="#ef4444" stroke-width="2"/>
+      <text x="150" y="141" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">VoIP rings</text>
+      <text x="150" y="158" text-anchor="middle" font-size="10" fill="#64748b">24/7, instant pickup</text>
+
+      <!-- Website path: site then call -->
+      <rect x="280" y="120" width="240" height="50" rx="10" fill="#fff" stroke="#3b82f6" stroke-width="2"/>
+      <text x="400" y="141" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">HCP click-to-call site</text>
+      <text x="400" y="158" text-anchor="middle" font-size="10" fill="#64748b">Sees services, taps "Call Now"</text>
+
+      <!-- Book path: OLB -->
+      <rect x="570" y="120" width="160" height="50" rx="10" fill="#fff" stroke="#10b981" stroke-width="2"/>
+      <text x="650" y="141" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">OLB booking page</text>
+      <text x="650" y="158" text-anchor="middle" font-size="10" fill="#64748b">Selects time, books</text>
+
+      <!-- Second step for website -->
+      <rect x="305" y="210" width="190" height="45" rx="10" fill="#fff" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="400" y="237" text-anchor="middle" font-size="11" fill="#3b82f6" font-weight="600">Calls VoIP from site</text>
+
+      <!-- Second step for book online -->
+      <rect x="575" y="210" width="150" height="45" rx="10" fill="#fff" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="650" y="230" text-anchor="middle" font-size="11" fill="#10b981" font-weight="600">Confirmed + SMS</text>
+      <text x="650" y="246" text-anchor="middle" font-size="10" fill="#64748b">sent to customer</text>
+
+      <!-- Arrows: icons to middle boxes -->
+      <path d="M150,68 L150,118" stroke="#ef4444" stroke-width="2.5" fill="none" marker-end="url(#arrow-red)"/>
+      <path d="M400,68 L400,118" stroke="#3b82f6" stroke-width="2.5" fill="none" marker-end="url(#arrow-blue)"/>
+      <path d="M650,68 L650,118" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrow-green)"/>
+
+      <!-- Arrows: middle to second step -->
+      <path d="M400,170 L400,208" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+      <path d="M650,170 L650,208" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+
+      <!-- Arrows: all converge to CSR AI -->
+      <!-- Call: straight down -->
+      <path d="M150,170 C150,280 400,300 400,330" stroke="#ef4444" stroke-width="2.5" fill="none" marker-end="url(#arrow-red)"/>
+      <!-- Website: curve from second step -->
+      <path d="M400,255 L400,330" stroke="#3b82f6" stroke-width="2.5" fill="none" marker-end="url(#arrow-blue)"/>
+      <!-- Book: curve in -->
+      <path d="M650,255 C650,300 400,310 400,330" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrow-green)"/>
+
+      <!-- CSR AI box at bottom -->
+      <rect x="180" y="330" width="440" height="75" rx="16" fill="#dc2626" stroke="#991b1b" stroke-width="3"/>
+      <text x="400" y="360" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">🤖  CSR AI</text>
+      <text x="400" y="385" text-anchor="middle" font-size="14" font-weight="700" fill="#fecaca">The Universal Inbound Surface</text>
+    </svg>
+  </div>
+
+  <div style="text-align:center;margin-top:1rem;">
+    <div class="metric-tile">
+      <div><div class="label"><strong>OLB Conversion</strong></div><div style="display:flex;gap:0.75rem;align-items:baseline;"><span style="color:#94a3b8;font-size:0.8rem;">Now: ~8%</span><span class="num bl">→ 15%</span></div><div class="label">~40K jobs → ~80K jobs</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow">⬇</div>
+
+<!-- ===== CSR AI CALL ===== -->
+<div class="section" id="csrai">
+  <div class="section-label rd">CSR AI</div>
+  <div class="section-title">CSR AI Handles the Call</div>
+  <div class="section-desc">Value first, details second. Find availability before asking for PII. Follow sales best practices.</div>
+
+  <div class="side">
+    <div class="left">
+      <div class="sms-container">
+        <div class="sms-thread">
+          <div class="sms-header">
+            <strong>Voice Call — CSR AI</strong>
+            Inbound from (602) 555-7831 · 2:47 PM
+          </div>
+          <div class="msg ai">Hi, thanks for calling ComfortZone HVAC! How can I help you today?</div><div class="msg-clear"></div>
+          <div class="msg cust">Yeah, my AC stopped blowing cold air this morning. It's like 95 degrees out here.</div><div class="msg-clear"></div>
+          <div class="msg ai">Oh no, that's miserable in this heat. Let me see what we can do. Is this for a home or a business?</div><div class="msg-clear"></div>
+          <div class="msg cust">It's my house. In Scottsdale.</div><div class="msg-clear"></div>
+          <div class="msg ai">Great, we service Scottsdale. I can see we have an opening tomorrow morning between 8 and 10 AM — would that work?</div><div class="msg-clear"></div>
+          <div class="msg cust">Tomorrow morning would be perfect.</div><div class="msg-clear"></div>
+          <div class="msg ai">Awesome, let me get that booked. Can I get your name and address for the visit?</div><div class="msg-clear"></div>
+          <div class="msg cust">Sarah Mitchell, 7422 E Camelback Road.</div><div class="msg-clear"></div>
+          <div class="msg ai">You're all set for tomorrow, Thursday, 8-10 AM. I'll text you a confirmation right now. Anything else?</div><div class="msg-clear"></div>
+          <div class="msg cust">Nope, that's it. Thanks!</div><div class="msg-clear"></div>
+          <div class="msg ai">Stay cool — we'll see you tomorrow! Bye!</div><div class="msg-clear"></div>
+        </div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="ann gr" style="margin-top:0;">
+        <h4>Value first, PII second</h4>
+        <p>Understands issue, finds availability, THEN asks for name/address. Customer knows they're getting helped before giving personal info.</p>
+      </div>
+      <div class="ann bl">
+        <h4>Pro context = confident answers</h4>
+        <p>"We service Scottsdale" and "opening tomorrow" — specific answers because CSR AI has the pro's service area and real calendar.</p>
+      </div>
+      <div class="ann pu">
+        <h4>2 minutes → booked job</h4>
+        <p>No hold music. No voicemail. No callback. From "AC isn't working" to confirmed appointment in under 2 minutes.</p>
+      </div>
+      <div class="ann am">
+        <h4>This is the "aha moment"</h4>
+        <p>Pro signs up, does nothing, and jobs start appearing on their calendar. That's product-market fit. That's retention.</p>
+      </div>
+      <div style="margin-top:0.75rem;">
+        <div class="metric-tile">
+          <div><div class="label"><strong>CSR AI Booking Rate</strong></div><div style="display:flex;gap:0.75rem;align-items:baseline;"><span style="color:#94a3b8;font-size:0.8rem;">Now: ~55%</span><span class="num gr">→ 80%</span></div><div class="label">Non-silent, new customer calls</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow">⬇</div>
+
+<!-- ===== PRE-JOB SMS ===== -->
+<div class="section" id="pre-job">
+  <div class="section-label cy">Pre-Job</div>
+  <div class="section-title">Customer Gets SMS Updates & Sends Photos</div>
+  <div class="section-desc">
+    Automated texts keep the customer engaged, reduce no-shows, and make the pro look incredibly professional.
+  </div>
+
+  <div class="side">
+    <div class="left">
+      <div class="sms-updates">
+        <div class="sms-update-header">
+          <strong>ComfortZone HVAC</strong>
+          <div class="sub">Text Messages</div>
+        </div>
+
+        <div class="notif">
+          <div class="notif-time">Wed 2:48 PM</div>
+          <div class="notif-text">Hi Sarah! Your AC repair is confirmed for <strong>tomorrow (Thu) 8-10 AM</strong>. Reply with any questions!</div>
+        </div>
+
+        <div class="notif">
+          <div class="notif-time">Wed 2:49 PM</div>
+          <div class="notif-text">Can you send a photo of your AC unit so our tech can prepare? Just reply with a pic 📸</div>
+        </div>
+
+        <!-- Homeowner sends photo -->
+        <div class="notif-photo">
+          <div class="notif-time" style="font-size:0.6rem;color:#3b82f6;font-weight:600;">Wed 3:12 PM — Sarah replied</div>
+          <div style="font-size:0.78rem;color:#1e293b;margin-top:0.15rem;">Here's my unit, it's the one on the left side of the house</div>
+          <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=250&fit=crop" alt="AC unit photo from homeowner">
+        </div>
+
+        <div class="notif">
+          <div class="notif-time">Wed 3:13 PM</div>
+          <div class="notif-text">Thanks Sarah! This is really helpful — our tech Mike will review this before heading out. 👍</div>
+        </div>
+
+        <div class="notif">
+          <div class="notif-time">Thu 7:45 AM</div>
+          <div class="notif-text">Good morning! Tech <strong>Mike</strong> is heading your way — arriving by <strong>8:15 AM</strong>.</div>
+        </div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="ann gr" style="margin-top:0;">
+        <h4>Customer sends photo → tech arrives prepared</h4>
+        <p>Tech reviews the unit photo before driving out. Faster diagnosis, right parts on the truck, better first impression.</p>
+      </div>
+      <div class="ann bl">
+        <h4>Reminders reduce no-shows</h4>
+        <p>Multiple touchpoints confirm the appointment. Customer feels committed and informed.</p>
+      </div>
+      <div class="ann pu">
+        <h4>"On the way" = professional experience</h4>
+        <p>Customer thinks: "This company really has it together." That perception increases the chance they say yes to the estimate.</p>
+      </div>
+      <div class="ann am">
+        <h4>Pro sent none of this</h4>
+        <p>100% automated. The pro just shows up and does the work.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow">⬇</div>
+
+<!-- ===== NO-SHOW LOOP ===== -->
+<div class="section" id="no-show" style="padding:1.5rem 0;">
+  <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
+    <span style="font-size:1.1rem;">🔄</span>
+    <div class="section-label rd" style="margin:0;">Aside: No-Show & Reschedule Loop</div>
+    <span style="background:#ef4444;color:#fff;font-size:0.6rem;font-weight:800;padding:0.12rem 0.4rem;border-radius:4px;">AI-POWERED</span>
+  </div>
+  <div class="section-desc">If a customer no-shows, AI automatically kicks off a rebook cycle via SMS. No manual intervention.</div>
+
+  <div class="side">
+    <div class="left">
+      <div class="sms-container">
+        <div class="sms-thread">
+          <div class="sms-header">
+            <strong>ComfortZone HVAC</strong>
+            No-Show Recovery
+          </div>
+
+          <div class="msg-time">Thu 11:00 AM — 1 hour after missed window</div>
+          <div class="msg ai">Hi Sarah, we missed you this morning for your AC repair. No worries at all! Would you like to reschedule? We have openings tomorrow and Friday.</div><div class="msg-clear"></div>
+
+          <div class="msg-time">Fri — Day 2 follow-up</div>
+          <div class="msg ai">Hey Sarah, just checking in — we still have openings this week for your AC repair. It's supposed to hit 100° this weekend. Want us to book you in?</div><div class="msg-clear"></div>
+
+          <div class="msg cust">Yes sorry about that! Can you do Saturday morning?</div><div class="msg-clear"></div>
+
+          <div class="msg ai">No problem at all! You're booked for Saturday 8-10 AM at 7422 E Camelback. We'll send a confirmation shortly. Stay cool! ❄️</div><div class="msg-clear"></div>
+
+          <div style="clear:both;margin-top:0.6rem;padding:0.5rem;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;font-size:0.7rem;color:#dc2626;text-align:center;">
+            If no reply → moves to lead nurture pipeline (low-touch, regular cadence)
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="ann rd" style="margin-top:0;">
+        <h4>Free revenue recovery</h4>
+        <p>These leads already exist. A few automated texts can recapture ~25% of no-shows with zero effort from the pro.</p>
+      </div>
+      <div class="ann am">
+        <h4>Context-aware follow-ups</h4>
+        <p>AI knows the service, the weather, the availability. "It's supposed to hit 100°" — that's not a template, that's a personalized nudge.</p>
+      </div>
+      <div style="margin-top:0.75rem;">
+        <div class="metric-tile">
+          <div><div class="label"><strong>No-Show Recovery</strong></div><div style="display:flex;gap:0.75rem;align-items:baseline;"><span style="color:#94a3b8;font-size:0.8rem;">Now: ~0%</span><span class="num rd">→ 25%</span></div><div class="label">Rebooked via AI follow-up</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow">⬇</div>
+
+<!-- ===== POST-JOB: REVIEW + GBP POST ===== -->
+<div class="section" id="post-job">
+  <div class="section-label pk">Post-Job</div>
+  <div class="section-title">After the Job: Reviews + GBP Updates</div>
+  <div class="section-desc">Two things happen automatically after every completed job.</div>
+
+  <div class="parallel-row">
+    <div class="parallel-label">⚡ Both auto-triggered after job completion</div>
+
+    <!-- Review Request -->
+    <div style="text-align:left;">
+      <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:0.75rem;">📱 AI Review Request</h4>
+      <div class="sms-container" style="width:100%;">
+        <div class="sms-thread">
+          <div class="sms-header"><strong>ComfortZone HVAC</strong></div>
+          <div class="msg ai">Hi Sarah! Thanks for choosing ComfortZone today. Hope your AC is running great! ❄️ Would you mind leaving us a quick review? <span style="color:#38bdf8;">[review link]</span></div><div class="msg-clear"></div>
+          <div class="msg-time">2 days later</div>
+          <div class="msg ai">Just a quick follow-up — a review would mean the world to us ⭐ <span style="color:#38bdf8;">[review link]</span></div><div class="msg-clear"></div>
+          <div class="msg cust">Just left you 5 stars! Mike was great.</div><div class="msg-clear"></div>
+          <div class="msg ai">Thank you so much Sarah! We really appreciate it. 😊</div><div class="msg-clear"></div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;">
+        <div class="metric-tile">
+          <div><div class="label"><strong>Review Conversion</strong></div><div style="display:flex;gap:0.75rem;align-items:baseline;"><span style="color:#94a3b8;font-size:0.8rem;">Now: ~30%</span><span class="num gr">→ 50%</span></div><div class="label">With AI follow-ups</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GBP Auto-Post -->
+    <div style="text-align:left;">
+      <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:0.75rem;">📝 AI Creates GBP Update</h4>
+      <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.1);color:#1e293b;">
+        <div style="padding:0.85rem;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:0.6rem;">
+          <div style="width:36px;height:36px;background:#1a365d;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;font-weight:700;">CZ</div>
+          <div><div style="font-weight:700;font-size:0.8rem;">ComfortZone HVAC</div><div style="font-size:0.65rem;color:#64748b;">Posted just now</div></div>
+        </div>
+        <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&h=180&fit=crop" alt="Completed AC repair" style="width:100%;height:150px;object-fit:cover;">
+        <div style="padding:0.85rem;">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.3rem;">AC Repair in Scottsdale ❄️</div>
+          <div style="font-size:0.78rem;color:#475569;line-height:1.5;">
+            Just completed an AC repair in Scottsdale! Faulty capacitor — fixed in under an hour. Stay cool, Phoenix! 🌞
+            <br><span style="color:#3b82f6;">#HVAC #ACRepair #Scottsdale #Phoenix</span>
+          </div>
+        </div>
+      </div>
+      <div class="ann gr" style="margin-top:0.75rem;">
+        <h4>Google rewards active profiles</h4>
+        <p>5 jobs/week = 5 new GBP posts/week. Reviews + posts compound. Ranking climbs. More impressions → more calls. The flywheel spins.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow big">⬇</div>
+
+<!-- ===== RETENTION LOOP ===== -->
+<div class="section" id="retention">
+  <div class="section-label pu">Retention Loop</div>
+  <div class="section-title">AI Marketing → Customer Re-Engages → Back to CSR AI</div>
+  <div class="section-desc">At 30, 180, and 360 days, AI sends personalized campaigns. When the customer responds, it loops back to CSR AI.</div>
+
+  <div class="side">
+    <div class="left">
+      <div class="sms-container">
+        <div class="sms-thread">
+          <div class="sms-header">
+            <strong>ComfortZone HVAC</strong>
+            6 months later
+          </div>
+          <div class="msg-time">October 15 — Seasonal Campaign</div>
+          <div class="msg ai">Hey Sarah! Winter's around the corner ❄️ We serviced your AC back in April — now's the perfect time to get your furnace tuned up. Want me to book you in?</div><div class="msg-clear"></div>
+          <div class="msg cust">Actually yeah, good reminder. What does a tune-up cost?</div><div class="msg-clear"></div>
+          <div class="msg ai">A furnace tune-up is $89 — full inspection, filter change, safety check. Our next opening is Friday 9-11 AM. Work for you?</div><div class="msg-clear"></div>
+          <div class="msg cust">Friday works. Same address.</div><div class="msg-clear"></div>
+          <div class="msg ai">Booked! Friday 9-11 AM at 7422 E Camelback. I'll send a confirmation. Thanks Sarah!</div><div class="msg-clear"></div>
+
+          <div style="clear:both;margin-top:0.75rem;padding:0.6rem;background:#ecfdf5;border:1px solid #10b981;border-radius:8px;font-size:0.75rem;color:#059669;text-align:center;">
+            🔄 <strong>Full cycle restarts.</strong> Pre-job SMS → Job → Review → GBP Post → Next Campaign
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="ann gr" style="margin-top:0;">
+        <h4>Personalized = high converting</h4>
+        <p>"We serviced your AC back in April" — AI knows exactly what work was done. This isn't a generic blast. That's why it converts.</p>
+      </div>
+      <div class="ann rd">
+        <h4>Reply → CSR AI</h4>
+        <p>When Sarah replies, that goes straight to CSR AI. Same quality. Same system. Books the job.</p>
+      </div>
+      <div style="margin-top:0.75rem;">
+        <div class="metric-tile">
+          <div><div class="label"><strong>Existing Customer Rebook</strong></div><div style="display:flex;gap:0.75rem;align-items:baseline;"><span style="color:#94a3b8;font-size:0.8rem;">Now: minimal</span><span class="num gr">→ 10%</span></div><div class="label">of jobs → rebooked within 360 days</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loop-back flow diagram -->
+  <div style="max-width:700px;margin:1.5rem auto 0;">
+    <svg viewBox="0 0 700 280" style="width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow-loop" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#7c3aed"/></marker>
+        <marker id="arrow-loop-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#dc2626"/></marker>
+      </defs>
+
+      <!-- Campaign boxes across top -->
+      <rect x="20" y="15" width="140" height="50" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="90" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="#7c3aed">30 Day</text>
+      <text x="90" y="52" text-anchor="middle" font-size="9" fill="#64748b">Service plan upsell</text>
+
+      <rect x="200" y="15" width="140" height="50" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="270" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="#7c3aed">180 Day</text>
+      <text x="270" y="52" text-anchor="middle" font-size="9" fill="#64748b">Seasonal upsell</text>
+
+      <rect x="380" y="15" width="140" height="50" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="450" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="#7c3aed">360 Day</text>
+      <text x="450" y="52" text-anchor="middle" font-size="9" fill="#64748b">Annual service</text>
+
+      <!-- Arrows between campaigns -->
+      <path d="M162,40 L198,40" stroke="#7c3aed" stroke-width="1.5" fill="none" marker-end="url(#arrow-loop)"/>
+      <path d="M342,40 L378,40" stroke="#7c3aed" stroke-width="1.5" fill="none" marker-end="url(#arrow-loop)"/>
+
+      <!-- "Customer Engages" box -->
+      <text x="350" y="100" text-anchor="middle" font-size="11" fill="#64748b" font-weight="600">Customer replies to any campaign</text>
+      <path d="M90,67 L90,110 L300,110" stroke="#7c3aed" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+      <path d="M270,67 L270,110" stroke="#7c3aed" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+      <path d="M450,67 L450,110 L402,110" stroke="#7c3aed" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+
+      <!-- Big arrow down to CSR AI -->
+      <path d="M350,115 L350,148" stroke="#dc2626" stroke-width="3" fill="none" marker-end="url(#arrow-loop-red)"/>
+
+      <!-- CSR AI box -->
+      <rect x="200" y="152" width="300" height="55" rx="14" fill="#dc2626" stroke="#991b1b" stroke-width="2.5"/>
+      <text x="350" y="175" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">🤖  CSR AI</text>
+      <text x="350" y="195" text-anchor="middle" font-size="10" font-weight="600" fill="#fecaca">Books the job → cycle restarts</text>
+
+      <!-- Loop arrow curving back up from CSR AI to the right side and back to campaigns -->
+      <path d="M502,180 C620,180 640,100 640,40 C640,-10 560,10 522,40" stroke="#059669" stroke-width="2.5" fill="none" marker-end="url(#arrow-loop)" stroke-dasharray="6,3"/>
+      <text x="638" y="110" text-anchor="start" font-size="9" fill="#059669" font-weight="700" transform="rotate(90,638,110)">Job → Review → GBP → Next Campaign</text>
+
+      <!-- Legend -->
+      <text x="350" y="245" text-anchor="middle" font-size="13" font-weight="800" fill="#0f172a">♾️  The Infinite Loop</text>
+      <text x="350" y="265" text-anchor="middle" font-size="10" fill="#64748b">Every customer is on this loop forever. Revenue compounds.</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ===== KEY RESULTS RECAP ===== -->
+<div class="section" id="results" style="border-top:2px solid #e2e8f0;">
+  <div style="text-align:center;margin-bottom:1rem;">
+    <div class="section-label">Scorecard</div>
+    <div class="section-title">Key Results — Q2 2026</div>
+  </div>
+
+  <div class="kr-grid">
+    <div class="kr">
+      <div class="metric">Website Attach</div>
+      <div class="current">~0% →</div>
+      <div class="goal gr">25%</div>
+      <div class="target">$25/mo click-to-call sites</div>
+    </div>
+    <div class="kr">
+      <div class="metric">Google Auth</div>
+      <div class="current">~30% →</div>
+      <div class="goal pu">50%</div>
+      <div class="target">GBP access within 30 days</div>
+    </div>
+    <div class="kr">
+      <div class="metric">OLB Conversion</div>
+      <div class="current">~8% →</div>
+      <div class="goal bl">15%</div>
+      <div class="target">~40K → ~80K jobs</div>
+    </div>
+    <div class="kr">
+      <div class="metric">CSR AI Booking</div>
+      <div class="current">~55% →</div>
+      <div class="goal gr">80%</div>
+      <div class="target">Non-silent, new customers</div>
+    </div>
+    <div class="kr">
+      <div class="metric">Review Conversion</div>
+      <div class="current">~30% →</div>
+      <div class="goal gr">50%</div>
+      <div class="target">With AI follow-ups</div>
+    </div>
+    <div class="kr">
+      <div class="metric">No-Show Recovery</div>
+      <div class="current">~0% →</div>
+      <div class="goal rd">25%</div>
+      <div class="target">Rebooked via AI</div>
+    </div>
+    <div class="kr">
+      <div class="metric">Customer Rebook</div>
+      <div class="current">minimal →</div>
+      <div class="goal gr">10%</div>
+      <div class="target">of jobs rebooked in 360 days</div>
+    </div>
+    <div class="kr">
+      <div class="metric">Booked Jobs</div>
+      <div class="current">baseline →</div>
+      <div class="goal gr">2x+</div>
+      <div class="target">On non-silent calls</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BOTTOM ===== -->
+<div class="bottom-cta">
+  <h2>This is <span>the magic sauce</span>.</h2>
+  <p>
+    A pro signs up. Jobs start appearing on their calendar. Customers get professional communication.
+    Reviews pile up. Google ranking climbs. Existing customers come back automatically.
+    <br><br>
+    <strong>HCP doesn't just run the pro's business. It grows it.</strong>
+  </p>
+</div>
+
+</div>
+</div><!-- end main-content -->
+
+<script>
+const navLinks = document.querySelectorAll('.sidenav a');
+function updateNav() {
+  let current = '';
+  const scrollY = window.scrollY + 150;
+  const hero = document.getElementById('hero');
+  if (hero && scrollY < hero.offsetTop + hero.offsetHeight) current = 'hero';
+  document.querySelectorAll('[id]').forEach(sec => {
+    if (sec.closest('.sidenav')) return;
+    const link = document.querySelector('.sidenav a[href="#' + sec.id + '"]');
+    if (link && scrollY >= sec.offsetTop) current = sec.id;
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+}
+window.addEventListener('scroll', updateNav);
+updateNav();
+</script>
+</body>
+</html>

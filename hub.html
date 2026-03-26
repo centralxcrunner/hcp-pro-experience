@@ -7,19 +7,29 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; padding: 3rem 2rem; min-height: 100vh; }
-  .container { max-width: 800px; margin: 0 auto; }
-  h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.25rem; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 2.4rem; font-weight: 800; margin-bottom: 0.25rem; }
   .subtitle { font-size: 1rem; color: #64748b; margin-bottom: 2.5rem; }
-  .card { display: block; background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem 1.75rem; margin-bottom: 1rem; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.15s; }
+
+  /* Category headers */
+  .category { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-top: 2.5rem; margin-bottom: 0.75rem; padding-left: 0.25rem; }
+  .category:first-of-type { margin-top: 0; }
+
+  /* Cards */
+  .card { display: block; background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 0.75rem; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.15s; }
   .card:hover { border-color: #3b82f6; transform: translateY(-2px); }
-  .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.35rem; color: #f1f5f9; }
-  .card-desc { font-size: 0.95rem; color: #94a3b8; margin-bottom: 0.75rem; line-height: 1.5; }
-  .card-meta { display: flex; gap: 1.5rem; font-size: 0.8rem; color: #64748b; }
-  .card-meta span { display: flex; align-items: center; gap: 0.35rem; }
-  .badge { display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.2rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; vertical-align: middle; }
-  .badge-live { background: #14532d; color: #4ade80; }
+  .card-top { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.3rem; }
+  .card-title { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; }
+  .card-desc { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; margin-bottom: 0.6rem; }
+  .card-meta { display: flex; gap: 1.5rem; font-size: 0.75rem; color: #475569; }
+
+  .badge { display: inline-block; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.15rem 0.45rem; border-radius: 4px; }
+  .badge-pres { background: #14532d; color: #4ade80; }
   .badge-data { background: #1e3a5f; color: #60a5fa; }
-  .badge-flow { background: #3b1764; color: #c084fc; }
+  .badge-arch { background: #3b1764; color: #c084fc; }
+  .badge-tool { background: #713f12; color: #fbbf24; }
+  .badge-spec { background: #1e293b; color: #94a3b8; border: 1px solid #334155; }
+
   footer { margin-top: 3rem; text-align: center; font-size: 0.8rem; color: #475569; }
 </style>
 </head>
@@ -29,30 +39,183 @@
   <h1>HCP Revenue Hub</h1>
   <p class="subtitle">Internal resources — Chris Kosednar</p>
 
-  <a class="card" href="index.html">
-    <div class="card-title">AI-First Pro Experience <span class="badge badge-live">Presentation</span></div>
-    <div class="card-desc">End-to-end walkthrough of the HCP AI-first onboarding experience. Homeowner Google search → optimized GBP → 3 inbound paths → CSR AI → pre-job SMS → post-job reviews → retention loop.</div>
+  <!-- AI-First Pro Experience -->
+  <div class="category">AI-First Pro Experience</div>
+
+  <a class="card" href="HCP%20AI-First%20Pro%20Experience.html">
+    <div class="card-top">
+      <div class="card-title">AI-First Pro Experience</div>
+      <span class="badge badge-pres">Presentation</span>
+    </div>
+    <div class="card-desc">Full walkthrough: homeowner Google search → optimized GBP → 3 inbound paths (Call, Website, Book Online) → CSR AI → pre-job SMS → post-job reviews → retention loop. The flagship deck for John.</div>
     <div class="card-meta">
       <span>Created: Mar 26, 2026</span>
       <span>Updated: Mar 26, 2026</span>
     </div>
   </a>
 
-  <a class="card" href="flow.html">
-    <div class="card-title">Pro Experience — Flow Diagram <span class="badge badge-flow">Visual</span></div>
-    <div class="card-desc">Visual flow version of the AI-first pro experience. SVG-based diagrams showing GBP → 3 paths converging into CSR AI, with retention loop-back arrows.</div>
+  <a class="card" href="HCP%20Pro%20Onboarding%20Flow.html">
+    <div class="card-top">
+      <div class="card-title">Pro Onboarding Flow</div>
+      <span class="badge badge-pres">Visual</span>
+    </div>
+    <div class="card-desc">SVG flow diagram version of the AI-first experience. Visual arrows showing GBP → 3 paths converging into CSR AI, with retention loop-back.</div>
     <div class="card-meta">
       <span>Created: Mar 26, 2026</span>
       <span>Updated: Mar 26, 2026</span>
     </div>
   </a>
+
+  <!-- CSR AI / Greeting Analysis -->
+  <div class="category">CSR AI — Greeting Change Analysis</div>
 
   <a class="card" href="CSR%20AI%20Greeting%20Impact.html">
-    <div class="card-title">CSR AI Greeting Change — Impact Analysis <span class="badge badge-data">Data</span></div>
-    <div class="card-desc">Call performance analysis since 3/9. Four phases: old greeting → 5% test → 50/50 → 100% no disclosure. Weekday-only comparison shows +7.1pp non-silent rate, +1.5pp booking rate, +71 daily bookings.</div>
+    <div class="card-top">
+      <div class="card-title">Greeting Change — Impact Dashboard</div>
+      <span class="badge badge-data">Data</span>
+    </div>
+    <div class="card-desc">4-phase analysis (Old → 5% → 50/50 → 100% no disclosure). Weekday-only comparison: +7.1pp non-silent rate, +1.5pp booking rate, +71 daily bookings. Includes caller identification rates.</div>
     <div class="card-meta">
       <span>Created: Mar 26, 2026</span>
       <span>Updated: Mar 26, 2026</span>
+    </div>
+  </a>
+
+  <a class="card" href="HCP%20AI%20-%20Greeting%20AB%20Analysis.html">
+    <div class="card-top">
+      <div class="card-title">Greeting A/B — Call Review Tool</div>
+      <span class="badge badge-tool">Interactive</span>
+    </div>
+    <div class="card-desc">Filterable call transcript viewer for the A/B greeting test. Sidebar with call list, filters by variant/outcome, full transcript playback with scoring annotations.</div>
+    <div class="card-meta">
+      <span>Created: Mar 25, 2026</span>
+      <span>Updated: Mar 25, 2026</span>
+    </div>
+  </a>
+
+  <a class="card" href="CSRAI%20AB%20Test%20Dashboard%20Mockup.html">
+    <div class="card-top">
+      <div class="card-title">CSR AI — A/B Test Dashboard Mockup</div>
+      <span class="badge badge-data">Dashboard</span>
+    </div>
+    <div class="card-desc">Chart.js-powered dashboard mockup for the CSR AI greeting A/B test. Control vs variant comparison with live-updating metrics.</div>
+    <div class="card-meta">
+      <span>Created: Mar 16, 2026</span>
+      <span>Updated: Mar 16, 2026</span>
+    </div>
+  </a>
+
+  <a class="card" href="CSRAI%20Analysis.html">
+    <div class="card-top">
+      <div class="card-title">CSRAI Prompt Analysis — March 2026</div>
+      <span class="badge badge-data">Data</span>
+    </div>
+    <div class="card-desc">Deep-dive analysis of CSR AI prompt performance. Stat cards, breakdown by prompt type, conversion metrics across the funnel.</div>
+    <div class="card-meta">
+      <span>Created: Mar 16, 2026</span>
+      <span>Updated: Mar 16, 2026</span>
+    </div>
+  </a>
+
+  <a class="card" href="HCP%20AI%20-%20Address%20Loop%20Calls.html">
+    <div class="card-top">
+      <div class="card-title">Address Loop Call Review</div>
+      <span class="badge badge-tool">Interactive</span>
+    </div>
+    <div class="card-desc">Filterable call transcript viewer for address loop issues. Sidebar navigation with filters by call outcome, full transcript display with annotations.</div>
+    <div class="card-meta">
+      <span>Created: Mar 16, 2026</span>
+      <span>Updated: Mar 16, 2026</span>
+    </div>
+  </a>
+
+  <!-- Pro Website -->
+  <div class="category">Pro Website</div>
+
+  <a class="card" href="HCP%20Pro%20Website%20Analysis.html">
+    <div class="card-top">
+      <div class="card-title">Pro Website — Attach Rate Analysis</div>
+      <span class="badge badge-data">Data</span>
+    </div>
+    <div class="card-desc">Analysis of pro website attach rates. How many pros have websites, traffic patterns, and conversion from website visits to calls/bookings.</div>
+    <div class="card-meta">
+      <span>Created: Mar 25, 2026</span>
+      <span>Updated: Mar 25, 2026</span>
+    </div>
+  </a>
+
+  <a class="card" href="HCP%20Pro%20Website%20Search%20Results.html">
+    <div class="card-top">
+      <div class="card-title">Pro Website — Search Results View</div>
+      <span class="badge badge-data">Data</span>
+    </div>
+    <div class="card-desc">How pro websites appear in Google search results. Analysis of SEO positioning, click-through, and the relationship between website quality and inbound demand.</div>
+    <div class="card-meta">
+      <span>Created: Mar 25, 2026</span>
+      <span>Updated: Mar 25, 2026</span>
+    </div>
+  </a>
+
+  <!-- Architecture & Strategy -->
+  <div class="category">AI Architecture & Strategy</div>
+
+  <a class="card" href="HCP%20AI%20Context%20Architecture%20-%20Overview.html">
+    <div class="card-top">
+      <div class="card-title">Context Architecture — Overview (v2)</div>
+      <span class="badge badge-arch">Architecture</span>
+    </div>
+    <div class="card-desc">Updated overview of the HCP AI context architecture. How customer context, pro context, and intelligence layers connect to power CSR AI and future AI surfaces.</div>
+    <div class="card-meta">
+      <span>Created: Mar 17, 2026</span>
+      <span>Updated: Mar 17, 2026</span>
+    </div>
+  </a>
+
+  <a class="card" href="HCP%20AI%20-%20Context%20Architecture%20Overview.html">
+    <div class="card-top">
+      <div class="card-title">Context Architecture — Overview (v1)</div>
+      <span class="badge badge-arch">Architecture</span>
+    </div>
+    <div class="card-desc">Original version of the AI context architecture overview. System-level view of how data flows between services to inform AI decisions.</div>
+    <div class="card-meta">
+      <span>Created: Mar 17, 2026</span>
+      <span>Updated: Mar 17, 2026</span>
+    </div>
+  </a>
+
+  <a class="card" href="HCP%20AI%20-%20Pro%20Intelligence%20Agent.html">
+    <div class="card-top">
+      <div class="card-title">Pro Intelligence Agent</div>
+      <span class="badge badge-spec">Spec</span>
+    </div>
+    <div class="card-desc">One-pager for the Pro Intelligence Agent concept. How AI uses pro context (skills, availability, pricing, history) to make smarter scheduling and routing decisions.</div>
+    <div class="card-meta">
+      <span>Created: Mar 17, 2026</span>
+      <span>Updated: Mar 17, 2026</span>
+    </div>
+  </a>
+
+  <a class="card" href="HCP%20AI%20-%20Pro%20Context%20One%20Pager.html">
+    <div class="card-top">
+      <div class="card-title">Pro Context Service — One Pager</div>
+      <span class="badge badge-spec">Spec</span>
+    </div>
+    <div class="card-desc">Spec for the Pro Context Service. What data about the pro (business type, service area, capacity, pricing) gets assembled and how AI surfaces consume it.</div>
+    <div class="card-meta">
+      <span>Created: Mar 17, 2026</span>
+      <span>Updated: Mar 17, 2026</span>
+    </div>
+  </a>
+
+  <a class="card" href="HCP%20AI%20-%20Customer%20Context%20One%20Pager.html">
+    <div class="card-top">
+      <div class="card-title">Customer Context Service — One Pager</div>
+      <span class="badge badge-spec">Spec</span>
+    </div>
+    <div class="card-desc">Spec for the Customer Context Service. How homeowner data (history, address, preferences, past jobs) gets assembled for AI to personalize interactions.</div>
+    <div class="card-meta">
+      <span>Created: Mar 17, 2026</span>
+      <span>Updated: Mar 17, 2026</span>
     </div>
   </a>
 
