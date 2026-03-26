@@ -286,7 +286,6 @@
 </style>
 </head>
 <body>
-<script src="gate.js"></script>
 
 <!-- ===== HERO ===== -->
 <div class="container">
@@ -446,48 +445,160 @@
 
     <div class="side">
       <div class="left">
-        <div class="gbp">
-          <div class="gbp-hero">
-            &#128247; ComfortZone HVAC &mdash; Phoenix, AZ
-          </div>
-          <div class="gbp-body">
-            <div class="gbp-name">ComfortZone HVAC</div>
-            <div class="gbp-cat">HVAC contractor &bull; Phoenix, AZ</div>
-            <div class="gbp-rating">
-              <div class="gbp-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-              <div class="gbp-count">4.9 (47 reviews)</div>
+        <!-- Realistic GBP Card -->
+        <div style="width:340px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.15);color:#202124;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+
+          <!-- Photo strip -->
+          <div style="display:flex;height:160px;overflow:hidden;position:relative;">
+            <div style="flex:2;background:linear-gradient(135deg,#1a365d 0%,#2563eb 100%);display:flex;align-items:center;justify-content:center;position:relative;">
+              <div style="color:#fff;text-align:center;font-size:0.8rem;">
+                <div style="font-size:2.5rem;margin-bottom:0.25rem;">&#10052;&#65039;</div>
+                <div style="font-weight:600;">ComfortZone HVAC</div>
+              </div>
+              <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.6);color:#fff;font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:4px;">See photos</div>
             </div>
-            <div class="gbp-status"><span class="open">Open</span> &bull; Closes 10 PM &bull; <span style="color:#3b82f6;">24/7 Emergency</span></div>
-            <div class="gbp-actions">
-              <button class="gbp-btn call ring">&#9742; Call</button>
-              <button class="gbp-btn web">&#127760; Website</button>
-              <button class="gbp-btn book ring" style="animation-delay:1s;">&#128197; Book</button>
-            </div>
-            <div style="font-size:0.75rem;color:#64748b;border-top:1px solid #e2e8f0;padding-top:0.75rem;">
-              <div><strong>Address:</strong> 4521 E Indian School Rd, Phoenix, AZ 85018</div>
-              <div style="margin-top:0.25rem;"><strong>Phone:</strong> (480) 555-0192</div>
-              <div style="margin-top:0.25rem;"><strong>Website:</strong> <span style="color:#3b82f6;">comfortzonehvac.housecallpro.com</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;">
+              <div style="flex:1;background:linear-gradient(135deg,#64748b,#94a3b8);border-left:2px solid #fff;"></div>
+              <div style="flex:1;background:linear-gradient(135deg,#475569,#64748b);border-left:2px solid #fff;border-top:2px solid #fff;display:flex;align-items:center;justify-content:center;">
+                <span style="color:#fff;font-size:0.65rem;">See outside</span>
+              </div>
             </div>
           </div>
-          <div class="gbp-flow-label">All 3 buttons &rarr; CSR AI</div>
+
+          <!-- Business name & info -->
+          <div style="padding:1rem 1rem 0;">
+            <div style="font-size:1.15rem;font-weight:700;color:#202124;">ComfortZone HVAC</div>
+            <div style="display:flex;align-items:center;gap:0.35rem;margin-top:0.25rem;">
+              <span style="font-size:0.85rem;font-weight:600;color:#202124;">4.9</span>
+              <span style="color:#f59e0b;font-size:0.8rem;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+              <span style="font-size:0.8rem;color:#70757a;">115 Google reviews</span>
+            </div>
+            <div style="font-size:0.8rem;color:#70757a;margin-top:0.15rem;">HVAC contractor in Phoenix, Arizona</div>
+          </div>
+
+          <!-- Action buttons row -->
+          <div style="display:flex;justify-content:space-around;padding:1rem 0.5rem;border-bottom:1px solid #e8eaed;">
+            <!-- Website - HIGHLIGHTED -->
+            <div style="text-align:center;position:relative;">
+              <div style="width:36px;height:36px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 0 0 3px #3b82f6;animation:pulse 2s infinite;">
+                <span style="color:#1a73e8;font-size:1rem;">&#127760;</span>
+              </div>
+              <div style="font-size:0.7rem;color:#1a73e8;margin-top:0.35rem;font-weight:500;">Website</div>
+              <div style="position:absolute;top:-8px;right:-12px;background:#3b82f6;color:#fff;font-size:0.5rem;font-weight:800;padding:0.1rem 0.35rem;border-radius:4px;white-space:nowrap;">HCP</div>
+            </div>
+            <!-- Directions -->
+            <div style="text-align:center;">
+              <div style="width:36px;height:36px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                <span style="color:#1a73e8;font-size:1rem;">&#9670;</span>
+              </div>
+              <div style="font-size:0.7rem;color:#1a73e8;margin-top:0.35rem;font-weight:500;">Directions</div>
+            </div>
+            <!-- Reviews -->
+            <div style="text-align:center;">
+              <div style="width:36px;height:36px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                <span style="color:#1a73e8;font-size:0.9rem;">&#9733;</span>
+              </div>
+              <div style="font-size:0.7rem;color:#1a73e8;margin-top:0.35rem;font-weight:500;">Reviews</div>
+            </div>
+            <!-- Save -->
+            <div style="text-align:center;">
+              <div style="width:36px;height:36px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                <span style="color:#1a73e8;font-size:0.9rem;">&#9744;</span>
+              </div>
+              <div style="font-size:0.7rem;color:#1a73e8;margin-top:0.35rem;font-weight:500;">Save</div>
+            </div>
+          </div>
+
+          <!-- Reserve with Google - HIGHLIGHTED -->
+          <div style="margin:0.75rem 1rem;padding:0.7rem 1rem;background:#e8f5e9;border:2px solid #10b981;border-radius:8px;display:flex;align-items:center;gap:0.6rem;position:relative;box-shadow:0 0 0 3px rgba(16,185,129,0.3);animation:pulse-green 2s infinite;">
+            <span style="font-size:1.3rem;">&#128197;</span>
+            <div>
+              <div style="font-size:0.85rem;font-weight:700;color:#137333;">Reserve with Google</div>
+              <div style="font-size:0.7rem;color:#70757a;">Book an appointment online</div>
+            </div>
+            <div style="position:absolute;top:-8px;right:8px;background:#10b981;color:#fff;font-size:0.5rem;font-weight:800;padding:0.1rem 0.35rem;border-radius:4px;">HCP</div>
+          </div>
+
+          <!-- Share / Call row -->
+          <div style="display:flex;padding:0 1rem 0.5rem;gap:1.5rem;">
+            <div style="display:flex;align-items:center;gap:0.35rem;">
+              <span style="color:#1a73e8;font-size:0.85rem;">&#8599;</span>
+              <span style="font-size:0.8rem;color:#1a73e8;font-weight:500;">Share</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.35rem;position:relative;">
+              <span style="color:#1a73e8;font-size:0.85rem;">&#9742;</span>
+              <span style="font-size:0.8rem;color:#1a73e8;font-weight:500;">Call</span>
+              <div style="position:absolute;top:-10px;right:-18px;background:#ef4444;color:#fff;font-size:0.5rem;font-weight:800;padding:0.1rem 0.35rem;border-radius:4px;">HCP</div>
+            </div>
+          </div>
+
+          <!-- Details -->
+          <div style="padding:0.5rem 1rem;border-top:1px solid #e8eaed;">
+            <div style="display:flex;align-items:flex-start;gap:0.5rem;padding:0.4rem 0;font-size:0.8rem;">
+              <span style="color:#70757a;flex-shrink:0;">&#128205;</span>
+              <span style="color:#202124;">4521 E Indian School Rd, Phoenix, AZ 85018</span>
+            </div>
+            <!-- Phone - HIGHLIGHTED -->
+            <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;font-size:0.8rem;background:#fef2f2;border-radius:6px;padding-left:0.4rem;border:1px solid #ef4444;position:relative;">
+              <span style="color:#70757a;flex-shrink:0;">&#9742;</span>
+              <span style="color:#1a73e8;">(480) 555-0192</span>
+              <div style="position:absolute;top:-6px;right:4px;background:#ef4444;color:#fff;font-size:0.45rem;font-weight:800;padding:0.1rem 0.3rem;border-radius:3px;">VoIP &rarr; CSR AI</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;font-size:0.8rem;">
+              <span style="color:#70757a;flex-shrink:0;">&#128337;</span>
+              <span><span style="color:#137333;font-weight:600;">Open</span> <span style="color:#70757a;">&bull; Closes 5 PM</span></span>
+            </div>
+          </div>
+
+          <!-- Reviews preview -->
+          <div style="padding:0.75rem 1rem;border-top:1px solid #e8eaed;">
+            <div style="font-size:0.85rem;font-weight:700;color:#202124;margin-bottom:0.5rem;">Reviews</div>
+            <div style="background:#f8f9fa;border-radius:8px;padding:0.6rem 0.75rem;margin-bottom:0.4rem;">
+              <div style="display:flex;align-items:center;gap:0.35rem;margin-bottom:0.2rem;">
+                <div style="width:22px;height:22px;border-radius:50%;background:#1a73e8;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.6rem;font-weight:700;">J</div>
+                <span style="color:#f59e0b;font-size:0.7rem;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+              </div>
+              <div style="font-size:0.75rem;color:#3c4043;">"Great service and very friendly staff!"</div>
+            </div>
+            <div style="background:#f8f9fa;border-radius:8px;padding:0.6rem 0.75rem;">
+              <div style="display:flex;align-items:center;gap:0.35rem;margin-bottom:0.2rem;">
+                <div style="width:22px;height:22px;border-radius:50%;background:#ea4335;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.6rem;font-weight:700;">M</div>
+                <span style="color:#f59e0b;font-size:0.7rem;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+              </div>
+              <div style="font-size:0.75rem;color:#3c4043;">"Customer service, communication, and execution were all top notch."</div>
+            </div>
+            <div style="font-size:0.75rem;color:#1a73e8;margin-top:0.5rem;font-weight:500;">View all Google reviews</div>
+          </div>
+
+          <!-- HCP label bar -->
+          <div style="background:#ef4444;color:#fff;text-align:center;padding:0.6rem;font-size:0.8rem;font-weight:700;">
+            Call, Website &amp; Book &rarr; All route through CSR AI
+          </div>
         </div>
+        <style>
+          @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 3px rgba(16,185,129,0.3); }
+            70% { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
+            100% { box-shadow: 0 0 0 3px rgba(16,185,129,0.3); }
+          }
+        </style>
       </div>
       <div class="right">
         <div class="ann gr" style="margin-top:0;">
-          <h4>&#9742; "Call" &rarr; VoIP &rarr; CSR AI</h4>
-          <p>Customer taps Call. Rings the VoIP number. CSR AI answers instantly, 24/7. Collects the issue, finds availability, books the job.</p>
+          <h4>&#128197; Reserve with Google &rarr; HCP Calendar</h4>
+          <p>The green "Reserve with Google" button lets customers book an appointment without calling. Slot goes directly to the pro's HCP calendar. CSR AI sends confirmation SMS.</p>
         </div>
         <div class="ann bl">
-          <h4>&#127760; "Website" &rarr; HCP Click-to-Call Site</h4>
-          <p>Opens the SEO website HCP built. Customer sees services, reviews, and a big "Call Now" button &mdash; which calls the same VoIP &rarr; CSR AI.</p>
-        </div>
-        <div class="ann pu">
-          <h4>&#128197; "Book" &rarr; Reserve with Google &rarr; HCP Calendar</h4>
-          <p>Customer books directly from Google. Slot lands on the pro's HCP calendar. Confirmation SMS sent via CSR AI. No phone call needed.</p>
+          <h4>&#127760; Website &rarr; HCP Click-to-Call Site</h4>
+          <p>Opens the SEO website HCP built. Customer sees services, reviews, and a prominent "Call Now" button &mdash; which calls the VoIP number &rarr; CSR AI.</p>
         </div>
         <div class="ann rd">
+          <h4>&#9742; Call &rarr; VoIP &rarr; CSR AI</h4>
+          <p>Customer taps Call or the phone number. Rings the HCP VoIP line. CSR AI answers instantly, 24/7. Understands the issue, finds availability, books the job.</p>
+        </div>
+        <div class="ann am">
           <h4>The key insight</h4>
-          <p>Every possible action a customer can take on this listing <strong style="color:#fca5a5;">feeds into HCP</strong>. There is no path that leaks outside the system. The pro doesn't need to answer their phone, check their email, or manage their calendar.</p>
+          <p>Every possible action on this listing &mdash; call, website, book &mdash; <strong style="color:#fca5a5;">feeds into HCP</strong>. There is no path that leaks outside the system. The pro doesn't need to answer their phone, check their email, or manage their calendar. HCP owns the entire funnel.</p>
         </div>
       </div>
     </div>
